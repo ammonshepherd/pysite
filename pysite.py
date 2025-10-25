@@ -51,7 +51,10 @@ def create_files_from(file_dir):
             
             # Determine relative path to preserve directory structure
             rel_path = os.path.relpath(input_path, file_dir)
-            output_path = os.path.join(OUTPUT_DIR, rel_path)
+            if file_dir == POSTS_DIR:
+                output_path = os.path.join(OUTPUT_DIR, POSTS_DIR, rel_path)
+            else:
+                output_path = os.path.join(OUTPUT_DIR, rel_path)
             
             # Ensure the output directory exists
             os.makedirs(os.path.dirname(output_path), exist_ok=True)

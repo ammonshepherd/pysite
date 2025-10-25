@@ -44,6 +44,8 @@ These files contain the &lt;main&gt; and &lt;/main&gt; tags and anything that go
 
 Similar to the files in the pages directory, these files will have the content of the files in the layout directory prepended and appended to them.
 
+All posts will go into the the `static_site/posts` directory.
+
 
 ### Files: Public
 The files and folders in the `public` directory will be copied recursively to the static_sites folder without alteration.
@@ -72,4 +74,8 @@ After your files are created, run the following command in the terminal
 
 ```python server.py```
 
-This will create the files in the `static_site` directory and start an HTML server. The server will notice changes to files and restart the server every .5 seconds so you can refresh the browser to the latest changes.
+This will create the files in the `static_site` directory and start an HTML server. 
+
+You can view the site at http://127.0.0.1:8000
+
+The server will notice changes to files and restart the server every .5 seconds so you can refresh the browser to the latest changes.
