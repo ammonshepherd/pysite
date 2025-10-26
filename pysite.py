@@ -1,5 +1,6 @@
 import os
 import shutil
+import markdown
 
 # Define the source and destination paths
 LAYOUT_DIR = 'layout'
@@ -10,8 +11,8 @@ PUBLIC_DIR = 'public'
 
 HEAD_FILE = os.path.join(LAYOUT_DIR, 'head.html')
 HEADER_FILE = os.path.join(LAYOUT_DIR, 'header.html')
-FOOT_FILE = os.path.join(LAYOUT_DIR, 'foot.html')
 FOOTER_FILE = os.path.join(LAYOUT_DIR, 'footer.html')
+FOOT_FILE = os.path.join(LAYOUT_DIR, 'foot.html')
 
 def read_file_content(filepath):
     """Reads and returns the content of a file."""
@@ -32,7 +33,7 @@ def create_output_directory():
     print(f"Created clean output directory: {OUTPUT_DIR}")
 
 def create_files_from(file_dir):
-    """Combines head, header, body, foot and footer content to create HTML pages."""
+    """Combines head, header, footer and foot files with the pages or posts files to create an HTML file."""
     # Read header and footer contents
     head_content = read_file_content(HEAD_FILE)
     header_content = read_file_content(HEADER_FILE)
@@ -40,7 +41,7 @@ def create_files_from(file_dir):
     foot_content = read_file_content(FOOT_FILE)
 
     if not head_content or not foot_content:
-        print("Header or footer content is missing. Aborting.")
+        print("head.html or foot.html is missing content. Aborting.")
         return
 
     # Walk through the pages directory
@@ -59,7 +60,7 @@ def create_files_from(file_dir):
             # Ensure the output directory exists
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             
-            # Process only .html files
+            # Process .html files
             if file.lower().endswith(".html"):
                 # Read, modify, and write content
                 with open(input_path, "r", encoding="utf-8") as infile:
@@ -71,6 +72,29 @@ def create_files_from(file_dir):
                     outfile.write(new_content)
                 
                 print(f"Processed: {input_path} → {output_path}")
+            # Process .md files
+            elif file.lower().endswith(".md"):
+                # Read, modify, and write content
+                with open(input_path, "r", encoding="utf-8") as infile:
+                    content = infile.read()
+                
+                # convert markdown to HTML
+                html_content = markdown.markdown(content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
+                
+                new_content = f"{head_content}\n{header_content}\n<section id='md-wrap'>\n{html_content}\n</section>\n{footer_content}\n{foot_content}"
+
+                with open(output_path, "w", encoding="utf-8") as outfile:
+                    outfile.write(new_content)
+                
+                # Change the extension
+                # Split the file path into name and extension
+                base, _ = os.path.splitext(output_path)
+                # Create the new file path
+                new_html_file = base + ".html"
+                # Rename (move) the file
+                shutil.move(output_path, new_html_file)
+
+                print(f"Processed: {input_path} (MD) → {new_html_file} (HTML)")
             else:
                 # Just copy non-HTML files as-is
                 with open(input_path, "rb") as src, open(output_path, "wb") as dst:
@@ -80,7 +104,7 @@ def create_files_from(file_dir):
 def create_files():
     """Calls the create_files_from function to create posts and pages and copies the public folder to the OUTPUT_DIR directory"""
 
-    # Call the create_pages function to create the pages
+    # Call the create_files_from function to create the pages
     create_files_from(PAGES_DIR)
 
     # Call the create_files_from function to create the posts
