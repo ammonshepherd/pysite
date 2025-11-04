@@ -6,7 +6,7 @@ import markdown
 LAYOUT_DIR = 'layout'
 PAGES_DIR = 'pages'
 POSTS_DIR = 'posts'
-OUTPUT_DIR = 'static_site'
+OUTPUT_DIR = 'docs' # use 'docs' to integrate with GitHub Pages
 PUBLIC_DIR = 'public'
 
 HEAD_FILE = os.path.join(LAYOUT_DIR, 'head.html')

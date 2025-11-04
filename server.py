@@ -9,9 +9,10 @@ from watchdog.events import FileSystemEventHandler
 # --- Configuration ---
 WATCH_DIRECTORY = '.'            # The directory to watch for changes
 BUILD_SCRIPT = "pysite.py"      # The script to execute on file change
-SERVE_DIRECTORY = "static_site"       # The directory for the HTTP server to serve
+SERVE_DIRECTORY = "docs"       # The directory for the HTTP server to serve
 SERVER_HOST = '127.0.0.1'        # The host address for the HTTP server
 SERVER_PORT = 8000               # The port for the HTTP server
+WAIT_TIME = 1                    # Time to wait for file changes in seconds
 
 # --- Global variable for the server process ---
 server_process = None
@@ -24,13 +25,31 @@ class ChangeHandler(FileSystemEventHandler):
         self.last_run_time = 0
 
     def on_any_event(self, event):
-        # Ignore events on directories and the script itself
-        if event.is_directory or event.src_path.endswith('server.py'):
+        # Ignore directories
+        if event.is_directory:
+            return
+
+        # Get absolute paths for comparisons
+        abs_event_path = os.path.abspath(event.src_path)
+        abs_self_path = os.path.abspath(__file__)
+        abs_serve_dir = os.path.abspath(SERVE_DIRECTORY)
+
+        # Ignore changes to this watcher script itself
+        if abs_event_path == abs_self_path:
+            return
+
+        # Ignore hidden files or folders (e.g., .git, .vscode, .DS_Store)
+        parts = abs_event_path.split(os.sep)
+        if any(part.startswith('.') for part in parts):
+            return
+
+        # Ignore any files inside the SERVE_DIRECTORY (e.g., the output site)
+        if abs_event_path.startswith(abs_serve_dir + os.sep):
             return
 
         # Simple debounce to prevent running the script multiple times for one save
         current_time = time.time()
-        if current_time - self.last_run_time < 0.5:
+        if current_time - self.last_run_time < WAIT_TIME:
             return
         
         self.last_run_time = current_time
