@@ -3,11 +3,23 @@
 # Pysite
 A Super Simple Static Site Creator written in Python.
 
-# Usage
+# Installation
 
 Copy `pysite.py` and `server.py` and files into your project directory.
 
-## Setup
+Create a Python Virtual Environment
+
+`python -m venv .venv`
+
+Activate the environment
+
+`source .venv/bin/activate`
+
+Install `markdown` and `watchdog` modules.
+
+`pip install markdown watchdog`
+
+## Site Setup
 ### Folders
 Create the following directories/folders:
 
@@ -69,7 +81,7 @@ The file public/images/logo.png is accessed like `</img alt="alt description" sr
 The CSS file can be accessed in the layout/head.html file like `<link rel="stylesheet" href="/public/css/style.css" />`
 
 
-## Running the script
+## Usage
 
 After your files are created, run the following command in the terminal
 
