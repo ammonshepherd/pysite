@@ -110,6 +110,12 @@ def create_files():
     # Call the create_files_from function to create the posts
     create_files_from(POSTS_DIR)
 
+    # Copy CNAME file for GitHub pages with custom domain name
+    if os.path.isfile("CNAME"):
+        # Define destination path
+        copy_file = os.path.join(OUTPUT_DIR, "CNAME")
+        shutil.copy2("CNAME", copy_file)
+
     # Copy the public directory into the static_site folder
     try:
         # This will copy the entire public folder and its contents to the new location.
