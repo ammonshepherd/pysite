@@ -1,4 +1,4 @@
-![A python driving a Chevy Chevelle SS](pysite-logo.png)
+![A python driving a Chevy Chevelle SS](pysite-logo.webp)
 
 # Pysite
 A Super Simple Static Site Creator written in Python.
