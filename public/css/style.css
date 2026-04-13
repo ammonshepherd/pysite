@@ -3,6 +3,18 @@ body {
     padding: 0;
     background-color: #F2E8D9;
 }
+
+code {
+    background: #efefef;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-family: "Google Sans Code", monospace;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: .8rem;
+}
+
 main {
     padding: 5px 20px;
     margin: auto;
