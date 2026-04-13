@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PySite: Python Based Static Site Generator</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+    <div class="logo">
+        <img alt="A python driving a Chevy Chevelle SS" src="/public/images/pysite-logo.webp">
+    </div>
+    <main>
+
+<section id='md-wrap'>
+<h1>Pysite</h1>
+<p>A Super Simple Static Site Creator written in Python.</p>
+<h1>Installation</h1>
+<p>Copy <code>pysite.py</code> and <code>server.py</code> files into your project folder.</p>
+<p>Create a Python Virtual Environment</p>
+<p><code>python -m venv .venv</code></p>
+<p>Activate the environment</p>
+<p><code>source .venv/bin/activate</code></p>
+<p>Install <code>markdown</code> and <code>watchdog</code> modules.</p>
+<p><code>pip install markdown watchdog</code></p>
+<h1>What it does</h1>
+<p>At the very basics, this script will take every HTML and Markdown file in a given folder and prepend header content and append footer content, creating a new HTML file. </p>
+<p>Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited in one place.</p>
+<p><img alt="Multiple files compiled into one HTML file." src="/public/images/file-assembly.png" /></p>
+<h2>Site Setup</h2>
+<h3>Folders</h3>
+<p>Create the following folders in your project folder:</p>
+<ul>
+<li>layout/</li>
+<li>pages/</li>
+<li>posts/</li>
+<li>public/</li>
+</ul>
+<p>The names of these folders can be changed in the <code>pysite.py</code> file.</p>
+<h3>Files: Layout</h3>
+<p>Inside the layout folder, create the following files:</p>
+<ul>
+<li>layout/<ul>
+<li><code>head.html</code> Contains the &lt;DOCTYPE&gt; tag, the &lt;html&gt; tag, the &lt;head&gt; and &lt;/head&gt; tags and any HTML that goes in-between, and the opening &lt;body&gt; tag.</li>
+<li><code>header.html</code> The &lt;header&gt; and &lt;/header&gt; tags and any HTML that goes in-between. Top navigation is usually good to put here. This file could also contain the &lt;main&gt; tag. (This content <em>can</em> go in the head.html file.)</li>
+<li><code>footer.html</code> The &lt;footer&gt; and &lt;/footer&gt; tags and any HTML that goes in-between, and any HTML that should go before the closing &lt;/body&gt; tag. This file could also contain the &lt;/main&gt; tag. (This content <em>can</em> go in the foot.html file.)</li>
+<li><code>foot.html</code> Just the closing &lt;/body&gt; and closing &lt;html&gt; tags. This could also have other HTML or Javascript that should be included before the closing &lt;/body&gt; tag.</li>
+</ul>
+</li>
+</ul>
+<p>These four files will be wrapped around every file in the <code>pages</code> and <code>posts</code> folders. At least the <code>head.html</code> and <code>foot.html</code> files must have content in them. The header.html and footer.html files do not need to have content.</p>
+<p>The names of these files can be changed in the <code>pysite.py</code> file.</p>
+<h3>Files: Pages</h3>
+<p>These files can contain the &lt;main&gt; and &lt;/main&gt; tags and anything that goes in-between. This is the main content of the webpage.</p>
+<p>HTML and Markdown files inside the <code>pages</code> folder will be turned into HTML files to be served. Each file will have the head.html and header.html content prepended to it and the foot.html and footer.html content appended to it.</p>
+<p>The combined HTML file is named the same as the filename in the pages folder. This will be served at the root level of the site. </p>
+<p>Sub-folders in the pages folder and files within those sub-folders will be recreated in a <code>docs</code> folder with the sub-folders and file paths recreated.</p>
+<h3>Files: Posts</h3>
+<p>This is simply a duplicate of the <code>pages</code> functionality, but with a folder named <code>posts</code>. This name can be changed in the <code>pysite.py</code> file.</p>
+<p>Similar to the files in the pages folder, these files will have the content of the files in the layout folder prepended and appended to them.</p>
+<p>All posts will go into the <code>docs/posts/</code> folder.</p>
+<p>Sub-folders and their files will also be recreated.</p>
+<h3>Files: Public</h3>
+<p>The files and folders in the <code>public/</code> folder will be copied recursively to the <code>docs/</code> folder without alteration.</p>
+<p>This is where you put the images, css and Javascript. Suggested file structure:</p>
+<ul>
+<li>public/</li>
+<li>css/<ul>
+<li>style.css</li>
+</ul>
+</li>
+<li>images/<ul>
+<li>logo.png</li>
+<li>picture1.jpg</li>
+</ul>
+</li>
+<li>js/<ul>
+<li>menu.js</li>
+</ul>
+</li>
+<li>files/<ul>
+<li>ExampleData.csv</li>
+<li>GreatHandout.pdf</li>
+</ul>
+</li>
+</ul>
+<p>Access the files in these folders in your HTML and Markdown as absolute paths:</p>
+<p>The file <code>public/images/logo.png</code> is accessed like <code>&lt;img alt="alt description" src="/public/images/logo.png"&gt;</code> for HTML and <code>![alt description](/public/images/logo.png)</code> for Markdown.</p>
+<p>The CSS file can be accessed in the <code>layout/head.html</code> file like so: <code>&lt;link rel="stylesheet" href="/public/css/style.css"&gt;</code></p>
+<h2>Usage</h2>
+<p>After your files are created, run the following command in the terminal</p>
+<p><code>python server.py</code></p>
+<p>This will create the files in the <code>docs/</code> folder and start an HTML server. </p>
+<p>You can view the site at http://127.0.0.1:8000</p>
+<p>The server will notice changes to files and restart the server every second so you can refresh the browser to the latest changes.</p>
+<p>You can transfer the files from the <code>docs/</code> folder to your web host for static file serving glory! </p>
+<p>Select to serve the <code>docs/</code> folder for easy use with GitHub Pages. </p>
+<p>The name of this folder can be changed in the <code>pysite.py</code> file.</p>
+</section>
+
+    </main>
+</body>
+</html>

@@ -47,7 +47,8 @@ def create_files_from(file_dir):
         return
 
     # Walk through the pages directory
-    for root, _, files in os.walk(file_dir):
+    # Path.walk returns dirpath, dirnames, filenames
+    for root, _, files in Path.walk(file_dir):
         for file in files:
             # Full path to the input file
             input_path = Path(root)/Path(file)

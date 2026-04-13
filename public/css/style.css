@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #F2E8D9;
+}
+main {
+    padding: 5px 20px;
+    margin: auto;
+    width: 80vw;
+    max-width: 800px;
+    background: white;
+}
+
+main img {
+    width: 80%;
+}
+
+.logo {
+    width: 100%;
+}
+.logo img {
+    display: block;
+    margin: 0 auto;
+    height: 20vh;
+}
