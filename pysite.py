@@ -1,18 +1,21 @@
 import os
 import shutil
 import markdown
+from pathlib import Path
 
+# The BASE_DIR is the folder where this file exists
+BASE_DIR = Path(__file__).resolve().parent
 # Define the source and destination paths
-LAYOUT_DIR = 'layout'
-PAGES_DIR = 'pages'
-POSTS_DIR = 'posts'
-OUTPUT_DIR = 'docs' # use 'docs' to integrate with GitHub Pages
-PUBLIC_DIR = 'public'
+LAYOUT_DIR = BASE_DIR/'layout'
+PAGES_DIR = BASE_DIR/'pages'
+POSTS_DIR = BASE_DIR/'posts'
+OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
+PUBLIC_DIR = BASE_DIR/'public'
 
-HEAD_FILE = os.path.join(LAYOUT_DIR, 'head.html')
-HEADER_FILE = os.path.join(LAYOUT_DIR, 'header.html')
-FOOTER_FILE = os.path.join(LAYOUT_DIR, 'footer.html')
-FOOT_FILE = os.path.join(LAYOUT_DIR, 'foot.html')
+HEAD_FILE = LAYOUT_DIR/'head.html'
+HEADER_FILE = LAYOUT_DIR/'header.html'
+FOOTER_FILE = LAYOUT_DIR/'footer.html'
+FOOT_FILE = LAYOUT_DIR/'foot.html'
 
 def read_file_content(filepath):
     """Reads and returns the content of a file."""
@@ -25,11 +28,10 @@ def read_file_content(filepath):
 
 def create_output_directory():
     """Creates a clean output directory."""
-    if os.path.exists(OUTPUT_DIR):
+    if Path(OUTPUT_DIR).exists():
         shutil.rmtree(OUTPUT_DIR)
-    posts_dirpath = os.path.join(OUTPUT_DIR, POSTS_DIR)
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    os.makedirs(posts_dirpath, exist_ok=True)
+    posts_dirpath = OUTPUT_DIR/POSTS_DIR
+    Path(posts_dirpath).mkdir(parents=True, exist_ok=True)
     print(f"Created clean output directory: {OUTPUT_DIR}")
 
 def create_files_from(file_dir):
@@ -48,10 +50,19 @@ def create_files_from(file_dir):
     for root, _, files in os.walk(file_dir):
         for file in files:
             # Full path to the input file
-            input_path = os.path.join(root, file)
+            input_path = Path(root)/Path(file)
             
             # Determine relative path to preserve directory structure
             rel_path = os.path.relpath(input_path, file_dir)
+            print()
+            print()
+            print()
+            print(input_path)
+            print(file_dir)
+            print(rel_path)
+            print()
+            print()
+            print()
             if file_dir == POSTS_DIR:
                 output_path = os.path.join(OUTPUT_DIR, POSTS_DIR, rel_path)
             else:
