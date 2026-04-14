@@ -3,6 +3,9 @@ import shutil
 import markdown
 from pathlib import Path
 
+# TODO:
+# - add a layout/page.py and layout/post.py template
+
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
 # Define the source and destination paths
@@ -23,15 +26,15 @@ def read_file_content(filepath):
         with open(filepath, 'r', encoding='utf-8') as f:
             return f.read()
     except FileNotFoundError:
-        print(f"Error: {filepath} not found.")
+        print(f"WARNING: {filepath} not found.")
         return ""
 
 def create_output_directory():
     """Creates a clean output directory."""
-    if Path(OUTPUT_DIR).exists():
+    if OUTPUT_DIR.exists() and OUTPUT_DIR.is_dir:
         shutil.rmtree(OUTPUT_DIR)
     posts_dirpath = OUTPUT_DIR/POSTS_DIR
-    Path(posts_dirpath).mkdir(parents=True, exist_ok=True)
+    posts_dirpath.mkdir(parents=True, exist_ok=True)
     print(f"Created clean output directory: {OUTPUT_DIR}")
 
 def create_files_from(file_dir):
@@ -51,32 +54,23 @@ def create_files_from(file_dir):
     for root, _, files in Path.walk(file_dir):
         for file in files:
             # Full path to the input file
-            input_path = Path(root)/Path(file)
-            
+            input_path = file_dir/file
             # Determine relative path to preserve directory structure
-            rel_path = os.path.relpath(input_path, file_dir)
-            print()
-            print()
-            print()
-            print(input_path)
-            print(file_dir)
-            print(rel_path)
-            print()
-            print()
-            print()
+            rel_path = input_path.name
+
             if file_dir == POSTS_DIR:
-                output_path = os.path.join(OUTPUT_DIR, POSTS_DIR, rel_path)
+                output_path = OUTPUT_DIR/POSTS_DIR/rel_path
             else:
-                output_path = os.path.join(OUTPUT_DIR, rel_path)
+                output_path = OUTPUT_DIR/rel_path
             
             # Ensure the output directory exists
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            output_path.parent.mkdir(exist_ok=True)
             
             # Process .html files
             if file.lower().endswith(".html"):
                 # Read, modify, and write content
-                with open(input_path, "r", encoding="utf-8") as infile:
-                    content = infile.read()
+                with open(input_path, "r", encoding="utf-8") as in_file:
+                    content = in_file.read()
                 
                 new_content = f"{head_content}\n{header_content}\n{content}\n{footer_content}\n{foot_content}"
                 
@@ -87,8 +81,8 @@ def create_files_from(file_dir):
             # Process .md files
             elif file.lower().endswith(".md"):
                 # Read, modify, and write content
-                with open(input_path, "r", encoding="utf-8") as infile:
-                    content = infile.read()
+                with open(input_path, "r", encoding="utf-8") as in_file:
+                    content = in_file.read()
                 
                 # convert markdown to HTML
                 html_content = markdown.markdown(content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
@@ -99,14 +93,9 @@ def create_files_from(file_dir):
                     outfile.write(new_content)
                 
                 # Change the extension
-                # Split the file path into name and extension
-                base, _ = os.path.splitext(output_path)
-                # Create the new file path
-                new_html_file = base + ".html"
-                # Rename (move) the file
-                shutil.move(output_path, new_html_file)
+                new_out_path = output_path.rename(output_path.with_suffix(".html"))
 
-                print(f"Processed: {input_path} (MD) → {new_html_file} (HTML)")
+                print(f"Processed: {input_path} (MD) → {new_out_path} (HTML)")
             else:
                 # Just copy non-HTML files as-is
                 with open(input_path, "rb") as src, open(output_path, "wb") as dst:
@@ -123,17 +112,14 @@ def create_files():
     create_files_from(POSTS_DIR)
 
     # Copy CNAME file for GitHub pages with custom domain name
-    if os.path.isfile("CNAME"):
-        # Define destination path
-        copy_file = os.path.join(OUTPUT_DIR, "CNAME")
-        shutil.copy2("CNAME", copy_file)
+    if Path("CNAME").is_file():
+        Path("CNAME").copy(OUTPUT_DIR/"CNAME")
 
     # Copy the public directory into the static_site folder
     try:
         # This will copy the entire public folder and its contents to the new location.
-        copy_path = os.path.join(OUTPUT_DIR, os.path.basename(PUBLIC_DIR))
-        shutil.copytree(PUBLIC_DIR, copy_path)
-        print(f"Directory '{PUBLIC_DIR}' copied successfully to '{copy_path}'.")
+        PUBLIC_DIR.copy(OUTPUT_DIR/PUBLIC_DIR.name)
+        print(f"Directory '{PUBLIC_DIR}' copied successfully to '{OUTPUT_DIR/PUBLIC_DIR.name}'.")
     except Exception as e:
         print(f"An error occurred: {e}")
 
