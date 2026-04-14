@@ -31,11 +31,14 @@ def read_file_content(filepath):
 
 def create_output_directory():
     """Creates a clean output directory."""
-    if OUTPUT_DIR.exists() and OUTPUT_DIR.is_dir:
-        shutil.rmtree(OUTPUT_DIR)
-    posts_dirpath = OUTPUT_DIR/POSTS_DIR
-    posts_dirpath.mkdir(parents=True, exist_ok=True)
-    print(f"Created clean output directory: {OUTPUT_DIR}")
+    try:
+        if OUTPUT_DIR.exists() and OUTPUT_DIR.is_dir:
+            shutil.rmtree(OUTPUT_DIR)
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        print(f"Created clean output directory: {OUTPUT_DIR}")
+    except:
+        print(f"Error creating output directory {OUTPUT_DIR}")
+        return 
 
 def create_files_from(file_dir):
     """Combines head, header, footer and foot files with the pages or posts files to create an HTML file."""
@@ -49,7 +52,18 @@ def create_files_from(file_dir):
         print("head.html or foot.html is missing content. Aborting.")
         return
 
-    # Walk through the pages directory
+    # Create the output directory
+    try:
+        # if it's the pages directory, then don't create a subdirectory of docs
+        if file_dir.name == 'pages':
+            output_dir = OUTPUT_DIR
+        else:
+            output_dir = OUTPUT_DIR/file_dir.name
+            output_dir.mkdir(exist_ok=True)
+            print(f"Successfully created {output_dir} directory.")
+    except:
+        print(f"Error: Could not create {output_dir}.")
+    
     # Path.walk returns dirpath, dirnames, filenames
     for root, _, files in Path.walk(file_dir):
         for file in files:
@@ -57,15 +71,8 @@ def create_files_from(file_dir):
             input_path = file_dir/file
             # Determine relative path to preserve directory structure
             rel_path = input_path.name
+            output_path = output_dir/rel_path
 
-            if file_dir == POSTS_DIR:
-                output_path = OUTPUT_DIR/POSTS_DIR/rel_path
-            else:
-                output_path = OUTPUT_DIR/rel_path
-            
-            # Ensure the output directory exists
-            output_path.parent.mkdir(exist_ok=True)
-            
             # Process .html files
             if file.lower().endswith(".html"):
                 # Read, modify, and write content
