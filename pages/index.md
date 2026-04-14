@@ -1,3 +1,9 @@
+---
+title: 'Home Page'
+author: 'Ammon Shepherd'
+date: '2026-04-13 20:17:30'
+layout: page
+---
 # Pysite
 A Super Simple Static Site Creator written in Python.
 

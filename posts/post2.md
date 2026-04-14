@@ -1,0 +1,13 @@
+---
+title: 'A Markdown Post'
+author: 'Ammon Shepherd'
+date: '2026-04-13 21:24:44'
+layout: post
+---
+# A post example
+
+This page is a markdown file.
+
+## Markdown
+
+Markdown is used to make this file
