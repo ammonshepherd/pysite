@@ -3,60 +3,73 @@
 # Pysite
 A Super Simple Static Site Creator written in Python.
 
-# Installation
 
-Copy `pysite.py` and `server.py` files into your project folder.
+# Requirements
 
-Create a Python Virtual Environment
-
-`python -m venv .venv`
-
-Activate the environment
-
-`source .venv/bin/activate`
-
-Install `markdown` and `watchdog` modules.
-
-`pip install markdown watchdog`
+- Python 3.14+
+- Terminal and Code Editor (VS Code)
 
 
 # What it does
-At the very basics, this script will take every HTML and Markdown file in a given folder and prepend header content and append footer content, creating a new HTML file. 
 
-Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited in one place.
+At the very basics, this script will take every HTML and Markdown file in a given set of folders and insert the contents of that file into a template, creating a new HTML file. 
+
+Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited from the template file.
 
 ![Multiple files compiled into one HTML file.](file-assembly.png)
+
+
+# Installation
+
+1. Copy the `pysite.py`, `server.py`, and `requirements.txt` files into your project folder.
+
+2. Create a Python Virtual Environment
+
+`python -m venv .venv`
+
+3. Activate the environment
+
+`source .venv/bin/activate`
+
+4. Install modules.
+
+`pip install -r requirements.txt`
 
 ## Site Setup
 ### Folders
 Create the following folders in your project folder:
 
-  - layout/
+  - __layout/
   - pages/
   - posts/
   - public/
 
 The names of these folders can be changed in the `pysite.py` file.
 
+#### Folders: Top-level folders
+
+Any folder created at the top level of the project (the same level as the pages, posts, public and __layout folders) will be scanned for files to be converted. Each folder and it's sub-folders will be recreated with the altered HTML files in place. Any folder with a name that begins with two underscores (__layout, for example), and the docs/ folder will be ignored.
+
 ### Files: Layout
-Inside the layout folder, create the following files:
+Inside the __layout folder, create the following files:
 
-- layout/
-    - `head.html` Contains the &lt;DOCTYPE&gt; tag, the &lt;html&gt; tag, the &lt;head&gt; and &lt;/head&gt; tags and any HTML that goes in-between, and the opening &lt;body&gt; tag.
-    - `header.html` The &lt;header&gt; and &lt;/header&gt; tags and any HTML that goes in-between. Top navigation is usually good to put here. This file could also contain the &lt;main&gt; tag. (This content *can* go in the head.html file.)
-    - `footer.html` The &lt;footer&gt; and &lt;/footer&gt; tags and any HTML that goes in-between, and any HTML that should go before the closing &lt;/body&gt; tag. This file could also contain the &lt;/main&gt; tag. (This content *can* go in the foot.html file.)
-    - `foot.html` Just the closing &lt;/body&gt; and closing &lt;html&gt; tags. This could also have other HTML or Javascript that should be included before the closing &lt;/body&gt; tag.
+- __layout/
+    - `page.html` Is the page template. This file contains all of the HTML, with a placeholder, to create a 'page' of the website.
+    - `post.html` Is the post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.
 
-These four files will be wrapped around every file in the `pages` and `posts` folders. At least the `head.html` and `foot.html` files must have content in them. The header.html and footer.html files do not need to have content.
+Other template files can be created here. Each of these files should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.
 
-The names of these files can be changed in the `pysite.py` file.
+An HTML or Markdown file selects which template to use in the YAML frontmatter of the file:
+
+    template: page
+
 
 ### Files: Pages
-These files can contain the &lt;main&gt; and &lt;/main&gt; tags and anything that goes in-between. This is the main content of the webpage.
+These files contain the main content of the webpage.
 
-HTML and Markdown files inside the `pages` folder will be turned into HTML files to be served. Each file will have the head.html and header.html content prepended to it and the foot.html and footer.html content appended to it.
+HTML and Markdown files inside the `pages` folder will be turned into HTML files to be served. Each file's content will inserted into the placeholder section of the specified template file.
 
-The combined HTML file is named the same as the filename in the pages folder. This will be served at the root level of the site. 
+The combined HTML file is named the same as the filename in the pages folder. This will be served at the root level of the website. 
 
 Sub-folders in the pages folder and files within those sub-folders will be recreated in a `docs` folder with the sub-folders and file paths recreated.
 
@@ -93,6 +106,9 @@ The file `public/images/logo.png` is accessed like `<img alt="alt description" s
 
 The CSS file can be accessed in the `layout/head.html` file like so: `<link rel="stylesheet" href="/public/css/style.css">`
 
+### Files: Top-level Files
+
+All files in the top level of the project (the same level as the posts, pages, public and __layout folders) are ignored.
 
 ## Usage
 
@@ -100,7 +116,7 @@ After your files are created, run the following command in the terminal
 
 ```python server.py```
 
-This will create the files in the `docs/` folder and start an HTML server. 
+This will create the `docs/` folder, create any files and place them in the appropriate folders, and start an HTML server. 
 
 You can view the site at http://127.0.0.1:8000
 
@@ -108,6 +124,6 @@ The server will notice changes to files and restart the server every second so y
 
 You can transfer the files from the `docs/` folder to your web host for static file serving glory! 
 
-Select to serve the `docs/` folder for easy use with GitHub Pages. 
+If using GitHub Pages, choose to serve files from the `docs/` folder. 
 
-The name of this folder can be changed in the `pysite.py` file.
+The name of the static files output folder can be changed in the `pysite.py` file.
