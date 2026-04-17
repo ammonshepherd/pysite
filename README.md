@@ -39,21 +39,27 @@ Each HTML or Markdown file from the selected folder will now have the same heade
 ### Folders
 Create the following folders in your project folder:
 
-  - __layout/
+  - layout/
   - pages/
-  - posts/
   - public/
 
 The names of these folders can be changed in the `pysite.py` file.
 
 #### Folders: Top-level folders
 
-Any folder created at the top level of the project (the same level as the pages, posts, public and __layout folders) will be scanned for files to be converted. Each folder and it's sub-folders will be recreated with the altered HTML files in place. Any folder with a name that begins with two underscores (__layout, for example), and the docs/ folder will be ignored.
+Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, and files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them. 
 
-### Files: Layout
-Inside the __layout folder, create the following files:
+![pages folder to docs folder](pages-folder.png)
 
-- __layout/
+Any files and folders in the `public` folder will be copied exactly without alteration into the static output folder, including the `public` folder.
+
+![public folder to docs folder](public-folder.png)
+
+
+#### Folder: `layout`
+Inside the `layout` folder, create the following files:
+
+- layout/
     - `page.html` Is the page template. This file contains all of the HTML, with a placeholder, to create a 'page' of the website.
     - `post.html` Is the post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.
 
@@ -64,27 +70,18 @@ An HTML or Markdown file selects which template to use in the YAML frontmatter o
     template: page
 
 
-### Files: Pages
-These files contain the main content of the webpage.
+#### Folder: pages
+These files contain the content of the webpage.
 
 HTML and Markdown files inside the `pages` folder will be turned into HTML files to be served. Each file's content will inserted into the placeholder section of the specified template file.
 
-The combined HTML file is named the same as the filename in the pages folder. This will be served at the root level of the website. 
+The combined HTML file is named the same as the file name in the `pages` folder. All files and folders in the `pages` folder will be recreated in the `docs` folder with paths, folders and file names preserved. 
 
-Sub-folders in the pages folder and files within those sub-folders will be recreated in a `docs` folder with the sub-folders and file paths recreated.
-
-### Files: Posts
-This is simply a duplicate of the `pages` functionality, but with a folder named `posts`. This name can be changed in the `pysite.py` file.
-
-Similar to the files in the pages folder, these files will have the content of the files in the layout folder prepended and appended to them.
-
-All posts will go into the `docs/posts/` folder.
-
-Sub-folders and their files will also be recreated.
+Therefore, a file at `pages/about/me.md` will be turned into `docs/about/me.html` and will be accessible at the URL `https://website.com/about/me.html`.
 
 
-### Files: Public
-The files and folders in the `public/` folder will be copied recursively to the `docs/` folder without alteration.
+#### Folder: `public`
+The files and folders in the `public/` folder will be copied recursively to the `docs` folder without alteration.
 
 This is where you put the images, css and Javascript. Suggested file structure:
 
@@ -106,24 +103,131 @@ The file `public/images/logo.png` is accessed like `<img alt="alt description" s
 
 The CSS file can be accessed in the `layout/head.html` file like so: `<link rel="stylesheet" href="/public/css/style.css">`
 
-### Files: Top-level Files
+#### Folders: `docs`
 
-All files in the top level of the project (the same level as the posts, pages, public and __layout folders) are ignored.
+After the `pysite.py` or `server.py` script is executed (`python pysite.py` or `python server.py`), a `docs` folder is created and populated with files from the `pages` and `public` folders. All of the files in the `pages` folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the `docs` folder. The `docs` folder is deleted and recreated every time the `pysite.py` or `server.py` script is executed.
+
+The `docs` folder can be copied to a web host to be served as the static website. 
+
+If using GitHub Pages, select the `docs` folder as the folder to build the site from.
+
+![GitHub Pages built from docs folder in the main branch](github-pages.png)
+
+### Files
+
+#### Files in the top-level folder 
+
+All files in the top-level folder of the project (the same level as the `pages`, `public` and `layout` folders) are ignored.
+
+#### Files in `layout` folder
+
+Any file in the `layout` folder is considered a template. It should be a full HTML file with
+
+`{> CONTENT <}` 
+
+placed where the content of files from the `pages` directory should go.
+
+A simple pages template might look like:
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Groovy Website</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+    <div class="logo">
+        <img alt="My logo" src="/public/images/logo.webp">
+    </div>
+    <header>
+      <nav>
+        <a href="/">HOME</a>
+        <a href="/posts">Blog</a>
+        <a href="/about">About</a>
+      </nav>
+    </header>
+    <main>
+
+        {> CONTENT <}
+
+    </main>
+</body>
+</html>
+```
+
+#### Files in the `pages` folder
+
+All files in the `pages` folder and any sub-folders will have a template applied and then copied into the respective folder in the `docs` folder. 
+
+Each file can have a YAML frontmatter (even HTML files) to tell the application which template to apply. YAML frontmatter can look like this:
+
+```
+---
+title: 'HTML page example'
+author: 'Ammon Shepherd'
+date: '2026-04-13 21:23:33'
+layout: post
+---
+```
+
+Any variable in the YAML frontmatter can be used as a variable in the file and template using double curly braces and the variable name.
+
+For example, a blog post can look like this:
+
+```
+---
+title: 'Blog post example'
+author: 'Ammon Shepherd'
+date: '2026-04-13 21:23:33'
+layout: post
+---
+# {{title}}
+
+Date: {{date}}
+
+Here's my first blog post using this way cool static site generator.
+
+Here's a picture of Pete, my pet python!
+
+![python picture](/public/images/pete-python.png)
+
+Author: {{author}}
+```
+
+The post template could use the title variable like so:
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+```
+
+#### Files in the `public` folder
+
+Any file in the `public` folder is copied exactly, without any alteration, into the `docs/public/` folder or sub-folder. All files in the `public` folder are accessible directly in the URL at their respective location.
+
+For example, a file at `public/css/style.css` is available at `https://website.com/public/css/style.css` in the browser.
 
 ## Usage
 
-After your files are created, run the following command in the terminal
+After your site's files are created, run the following command in the terminal
 
 ```python server.py```
 
-This will create the `docs/` folder, create any files and place them in the appropriate folders, and start an HTML server. 
+This will create the `docs` folder, create any files and folders, and place them in the appropriate locations, then start an HTML server. 
 
-You can view the site at http://127.0.0.1:8000
+For development testing, you can view the site at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-The server will notice changes to files and restart the server every second so you can refresh the browser to the latest changes.
+The server will notice changes to files every second and restart the server so you can refresh the browser to the latest changes.
 
-You can transfer the files from the `docs/` folder to your web host for static file serving glory! 
+You can transfer the files from the `docs` folder to your web host for static file serving glory! 
 
-If using GitHub Pages, choose to serve files from the `docs/` folder. 
+If using GitHub Pages, choose to serve files from the `docs` folder. 
 
 The name of the static files output folder can be changed in the `pysite.py` file.
