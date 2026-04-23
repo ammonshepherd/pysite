@@ -47,7 +47,7 @@ The names of these folders can be changed in the `pysite.py` file.
 
 #### Folders: Top-level folders
 
-Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, and files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them. 
+Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
 
 ![pages folder to docs folder](pages-folder.png)
 
@@ -57,11 +57,11 @@ Any files and folders in the `public` folder will be copied exactly without alte
 
 
 #### Folder: `layout`
-Inside the `layout` folder, create the following files:
+Inside the `layout` folder, create any number of template files. For example:
 
 - layout/
-    - `page.html` Is the page template. This file contains all of the HTML, with a placeholder, to create a 'page' of the website.
-    - `post.html` Is the post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.
+    - `page.html` Is a page template. This file contains all of the HTML, with a placeholder, to create a 'page' page of the website.
+    - `post.html` Is a post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.
 
 Other template files can be created here. Each of these files should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.
 
@@ -158,6 +158,10 @@ A simple pages template might look like:
 </html>
 ```
 
+At least one template file must exist. The default is to look for a `layout/page.html` file. This setting can be changed in `pysite.py`.
+
+`DEFAULT_TEMPLATE = 'page'`
+
 #### Files in the `pages` folder
 
 All files in the `pages` folder and any sub-folders will have a template applied and then copied into the respective folder in the `docs` folder. 
@@ -172,6 +176,8 @@ date: '2026-04-13 21:23:33'
 layout: post
 ---
 ```
+
+The default template is applied when no YAML or no layout: option is provided.
 
 Any variable in the YAML frontmatter can be used as a variable in the file and template using double curly braces and the variable name.
 

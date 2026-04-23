@@ -63,13 +63,12 @@ class ChangeHandler(FileSystemEventHandler):
         try:
             # Use subprocess.run for a robust way to execute external commands
             subprocess.run(
-                ["python", self.build_script], 
+                [sys.executable, self.build_script], 
                 check=True, 
                 text=True, 
-                capture_output=True
+                capture_output=True # comment out to see BUILD_SCRIPT output
             )
-            now = datetime.now()
-            print(f"Build script executed successfully. {now}")
+            print(f"Build script executed successfully. {datetime.now()}")
         except subprocess.CalledProcessError as e:
             print(f"Error running script:\n{e.stderr.strip()}")
         except FileNotFoundError:

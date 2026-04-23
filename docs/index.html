@@ -14,63 +14,72 @@
         <img alt="A python driving a Chevy Chevelle SS" src="/public/images/pysite-logo.webp">
     </div>
     <main>
+        <h1>Page Template</h1>
 
-<section id='md-wrap'>
-<hr />
-<p>title: 'Home Page'
-author: 'Ammon Shepherd'
-date: '2026-04-13 20:17:30'
-layout: page</p>
-<hr />
-<h1>Pysite</h1>
+        <h1>Pysite</h1>
 <p>A Super Simple Static Site Creator written in Python.</p>
-<h1>Installation</h1>
-<p>Copy <code>pysite.py</code> and <code>server.py</code> files into your project folder.</p>
-<p>Create a Python Virtual Environment</p>
-<p><code>python -m venv .venv</code></p>
-<p>Activate the environment</p>
-<p><code>source .venv/bin/activate</code></p>
-<p>Install <code>markdown</code> and <code>watchdog</code> modules.</p>
-<p><code>pip install markdown watchdog</code></p>
+<h1>Requirements</h1>
+<ul>
+<li>Python 3.14+</li>
+<li>Terminal and Code Editor (VS Code)</li>
+</ul>
 <h1>What it does</h1>
-<p>At the very basics, this script will take every HTML and Markdown file in a given folder and prepend header content and append footer content, creating a new HTML file. </p>
-<p>Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited in one place.</p>
-<p><img alt="Multiple files compiled into one HTML file." src="/public/images/file-assembly.png" /></p>
+<p>At the very basics, this script will take every HTML and Markdown file in a given set of folders and insert the contents of that file into a template, creating a new HTML file. </p>
+<p>Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited from the template file.</p>
+<p><img alt="Multiple files compiled into one HTML file." class="image-border" src="/public/images/file-assembly.png" /></p>
+<h1>Installation</h1>
+<ol>
+<li>
+<p>Copy the <code>pysite.py</code>, <code>server.py</code>, and <code>requirements.txt</code> files into your project folder.</p>
+</li>
+<li>
+<p>Create a Python Virtual Environment</p>
+</li>
+</ol>
+<p><code>python -m venv .venv</code></p>
+<ol>
+<li>Activate the environment</li>
+</ol>
+<p><code>source .venv/bin/activate</code></p>
+<ol>
+<li>Install modules.</li>
+</ol>
+<p><code>pip install -r requirements.txt</code></p>
 <h2>Site Setup</h2>
 <h3>Folders</h3>
 <p>Create the following folders in your project folder:</p>
 <ul>
 <li>layout/</li>
 <li>pages/</li>
-<li>posts/</li>
 <li>public/</li>
 </ul>
 <p>The names of these folders can be changed in the <code>pysite.py</code> file.</p>
-<h3>Files: Layout</h3>
-<p>Inside the layout folder, create the following files:</p>
+<h4>Folders: Top-level folders</h4>
+<p>Any file or folder at the top level of the project (the same level as the <code>pages</code>, <code>public</code> and <code>layout</code> folders) will be ignored. Any file in the <code>pages</code> folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, and files and folders in the <code>pages</code> folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them and converted to HTML files. </p>
+<p><img alt="pages folder to docs folder" class="image-border" src="/public/images/pages-folder.png" /></p>
+<p>Any files and folders in the <code>public</code> folder will be copied exactly without alteration into the static output folder, including the <code>public</code> folder.</p>
+<p><img alt="public folder to docs folder" class="image-border" src="/public/images/public-folder.png" /></p>
+<h4>Folder: <code>layout</code></h4>
+<p>Inside the <code>layout</code> folder, create any number of template files. For example:</p>
 <ul>
 <li>layout/<ul>
-<li><code>head.html</code> Contains the &lt;DOCTYPE&gt; tag, the &lt;html&gt; tag, the &lt;head&gt; and &lt;/head&gt; tags and any HTML that goes in-between, and the opening &lt;body&gt; tag.</li>
-<li><code>header.html</code> The &lt;header&gt; and &lt;/header&gt; tags and any HTML that goes in-between. Top navigation is usually good to put here. This file could also contain the &lt;main&gt; tag. (This content <em>can</em> go in the head.html file.)</li>
-<li><code>footer.html</code> The &lt;footer&gt; and &lt;/footer&gt; tags and any HTML that goes in-between, and any HTML that should go before the closing &lt;/body&gt; tag. This file could also contain the &lt;/main&gt; tag. (This content <em>can</em> go in the foot.html file.)</li>
-<li><code>foot.html</code> Just the closing &lt;/body&gt; and closing &lt;html&gt; tags. This could also have other HTML or Javascript that should be included before the closing &lt;/body&gt; tag.</li>
+<li><code>page.html</code> Is a page template. This file contains all of the HTML, with a placeholder, to create a 'page' page of the website.</li>
+<li><code>post.html</code> Is a post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.</li>
 </ul>
 </li>
 </ul>
-<p>These four files will be wrapped around every file in the <code>pages</code> and <code>posts</code> folders. At least the <code>head.html</code> and <code>foot.html</code> files must have content in them. The header.html and footer.html files do not need to have content.</p>
-<p>The names of these files can be changed in the <code>pysite.py</code> file.</p>
-<h3>Files: Pages</h3>
-<p>These files can contain the &lt;main&gt; and &lt;/main&gt; tags and anything that goes in-between. This is the main content of the webpage.</p>
-<p>HTML and Markdown files inside the <code>pages</code> folder will be turned into HTML files to be served. Each file will have the head.html and header.html content prepended to it and the foot.html and footer.html content appended to it.</p>
-<p>The combined HTML file is named the same as the filename in the pages folder. This will be served at the root level of the site. </p>
-<p>Sub-folders in the pages folder and files within those sub-folders will be recreated in a <code>docs</code> folder with the sub-folders and file paths recreated.</p>
-<h3>Files: Posts</h3>
-<p>This is simply a duplicate of the <code>pages</code> functionality, but with a folder named <code>posts</code>. This name can be changed in the <code>pysite.py</code> file.</p>
-<p>Similar to the files in the pages folder, these files will have the content of the files in the layout folder prepended and appended to them.</p>
-<p>All posts will go into the <code>docs/posts/</code> folder.</p>
-<p>Sub-folders and their files will also be recreated.</p>
-<h3>Files: Public</h3>
-<p>The files and folders in the <code>public/</code> folder will be copied recursively to the <code>docs/</code> folder without alteration.</p>
+<p>Other template files can be created here. Each of these files should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.</p>
+<p>An HTML or Markdown file selects which template to use in the YAML frontmatter of the file:</p>
+<pre class="codehilite"><code>template: page
+</code></pre>
+
+<h4>Folder: pages</h4>
+<p>These files contain the content of the webpage.</p>
+<p>HTML and Markdown files inside the <code>pages</code> folder will be turned into HTML files to be served. Each file's content will inserted into the placeholder section of the specified template file.</p>
+<p>The combined HTML file is named the same as the file name in the <code>pages</code> folder. All files and folders in the <code>pages</code> folder will be recreated in the <code>docs</code> folder with paths, folders and file names preserved. </p>
+<p>Therefore, a file at <code>pages/about/me.md</code> will be turned into <code>docs/about/me.html</code> and will be accessible at the URL <code>https://website.com/about/me.html</code>.</p>
+<h4>Folder: <code>public</code></h4>
+<p>The files and folders in the <code>public/</code> folder will be copied recursively to the <code>docs</code> folder without alteration.</p>
 <p>This is where you put the images, css and Javascript. Suggested file structure:</p>
 <ul>
 <li>public/</li>
@@ -96,16 +105,103 @@ layout: page</p>
 <p>Access the files in these folders in your HTML and Markdown as absolute paths:</p>
 <p>The file <code>public/images/logo.png</code> is accessed like <code>&lt;img alt="alt description" src="/public/images/logo.png"&gt;</code> for HTML and <code>![alt description](/public/images/logo.png)</code> for Markdown.</p>
 <p>The CSS file can be accessed in the <code>layout/head.html</code> file like so: <code>&lt;link rel="stylesheet" href="/public/css/style.css"&gt;</code></p>
+<h4>Folders: <code>docs</code></h4>
+<p>After the <code>pysite.py</code> or <code>server.py</code> script is executed (<code>python pysite.py</code> or <code>python server.py</code>), a <code>docs</code> folder is created and populated with files from the <code>pages</code> and <code>public</code> folders. All of the files in the <code>pages</code> folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the <code>docs</code> folder. The <code>docs</code> folder is deleted and recreated every time the <code>pysite.py</code> or <code>server.py</code> script is executed.</p>
+<p>The <code>docs</code> folder can be copied to a web host to be served as the static website. </p>
+<p>If using GitHub Pages, select the <code>docs</code> folder as the folder to build the site from.</p>
+<p><img alt="GitHub Pages built from docs folder in the main branch" class="image-border" src="/public/images/github-pages.png" /></p>
+<h3>Files</h3>
+<h4>Files in the top-level folder</h4>
+<p>All files in the top-level folder of the project (the same level as the <code>pages</code>, <code>public</code> and <code>layout</code> folders) are ignored.</p>
+<h4>Files in <code>layout</code> folder</h4>
+<p>Any file in the <code>layout</code> folder is considered a template. It should be a full HTML file with</p>
+<p><code>{&gt; CONTENT &lt;}</code> </p>
+<p>placed where the content of files from the <code>pages</code> directory should go.</p>
+<p>A simple pages template might look like:</p>
+<pre class="codehilite"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;My Groovy Website&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;/public/css/style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;logo&quot;&gt;
+        &lt;img alt=&quot;My logo&quot; src=&quot;/public/images/logo.webp&quot;&gt;
+    &lt;/div&gt;
+    &lt;header&gt;
+      &lt;nav&gt;
+        &lt;a href=&quot;/&quot;&gt;HOME&lt;/a&gt;
+        &lt;a href=&quot;/posts&quot;&gt;Blog&lt;/a&gt;
+        &lt;a href=&quot;/about&quot;&gt;About&lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/header&gt;
+    &lt;main&gt;
+
+        {&gt; CONTENT &lt;}
+
+    &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>At least one template file must exist. The default is to look for a <code>layout/page.html</code> file. This setting can be changed in <code>pysite.py</code>.</p>
+<p><code>DEFAULT_TEMPLATE = 'page'</code></p>
+<h4>Files in the <code>pages</code> folder</h4>
+<p>All files in the <code>pages</code> folder and any sub-folders will have a template applied and then copied into the respective folder in the <code>docs</code> folder. </p>
+<p>Each file can have a YAML frontmatter (even HTML files) to tell the application which template to apply. YAML frontmatter can look like this:</p>
+<pre class="codehilite"><code>---
+title: 'HTML page example'
+author: 'Ammon Shepherd'
+date: '2026-04-13 21:23:33'
+layout: post
+---
+</code></pre>
+
+<p>The default template is applied when no YAML or no layout: option is provided.</p>
+<p>Any variable in the YAML frontmatter can be used as a variable in the file and template using double curly braces and the variable name.</p>
+<p>For example, a blog post can look like this:</p>
+<pre class="codehilite"><code>---
+title: 'Blog post example'
+author: 'Ammon Shepherd'
+date: '2026-04-13 21:23:33'
+layout: post
+---
+# {{title}}
+
+Date: {{date}}
+
+Here's my first blog post using this way cool static site generator.
+
+Here's a picture of Pete, my pet python!
+
+![python picture](/public/images/pete-python.png)
+
+Author: {{author}}
+</code></pre>
+
+<p>The post template could use the title variable like so:</p>
+<pre class="codehilite"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;{{title}}&lt;/title&gt;
+</code></pre>
+
+<h4>Files in the <code>public</code> folder</h4>
+<p>Any file in the <code>public</code> folder is copied exactly, without any alteration, into the <code>docs/public/</code> folder or sub-folder. All files in the <code>public</code> folder are accessible directly in the URL at their respective location.</p>
+<p>For example, a file at <code>public/css/style.css</code> is available at <code>https://website.com/public/css/style.css</code> in the browser.</p>
 <h2>Usage</h2>
-<p>After your files are created, run the following command in the terminal</p>
+<p>After your site's files are created, run the following command in the terminal</p>
 <p><code>python server.py</code></p>
-<p>This will create the files in the <code>docs/</code> folder and start an HTML server. </p>
-<p>You can view the site at http://127.0.0.1:8000</p>
-<p>The server will notice changes to files and restart the server every second so you can refresh the browser to the latest changes.</p>
-<p>You can transfer the files from the <code>docs/</code> folder to your web host for static file serving glory! </p>
-<p>Select to serve the <code>docs/</code> folder for easy use with GitHub Pages. </p>
-<p>The name of this folder can be changed in the <code>pysite.py</code> file.</p>
-</section>
+<p>This will create the <code>docs</code> folder, create any files and folders, and place them in the appropriate locations, then start an HTML server. </p>
+<p>For development testing, you can view the site at <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a></p>
+<p>The server will notice changes to files every second and restart the server so you can refresh the browser to the latest changes.</p>
+<p>You can transfer the files from the <code>docs</code> folder to your web host for static file serving glory! </p>
+<p>If using GitHub Pages, choose to serve files from the <code>docs</code> folder. </p>
+<p>The name of the static files output folder can be changed in the <code>pysite.py</code> file.</p>
 
     </main>
 </body>

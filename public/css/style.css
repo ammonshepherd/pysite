@@ -2,9 +2,10 @@ body {
     margin: 0;
     padding: 0;
     background-color: #F2E8D9;
+    line-height: 1.5;
 }
 
-code {
+code, .codehilite {
     background: #efefef;
     padding: 4px 6px;
     border-radius: 6px;
@@ -34,4 +35,10 @@ main img {
     display: block;
     margin: 0 auto;
     height: 20vh;
+}
+
+.image-border {
+    border: 1px solid grey;
+    border-radius: 4px;
+    box-shadow: 3px 3px 10px #dedede;
 }

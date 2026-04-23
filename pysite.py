@@ -2,23 +2,19 @@ import os
 import shutil
 import markdown
 from pathlib import Path
+import frontmatter
 
 # TODO:
-# - add a layout/page.py and layout/post.py template
+# - add template functionality 
 
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
 # Define the source and destination paths
 LAYOUT_DIR = BASE_DIR/'layout'
 PAGES_DIR = BASE_DIR/'pages'
-POSTS_DIR = BASE_DIR/'posts'
-OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
 PUBLIC_DIR = BASE_DIR/'public'
-
-HEAD_FILE = LAYOUT_DIR/'head.html'
-HEADER_FILE = LAYOUT_DIR/'header.html'
-FOOTER_FILE = LAYOUT_DIR/'footer.html'
-FOOT_FILE = LAYOUT_DIR/'foot.html'
+OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
+DEFAULT_TEMPLATE = 'page'
 
 def read_file_content(filepath):
     """Reads and returns the content of a file."""
@@ -36,87 +32,113 @@ def create_output_directory():
             shutil.rmtree(OUTPUT_DIR)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         print(f"Created clean output directory: {OUTPUT_DIR}")
-    except:
-        print(f"Error creating output directory {OUTPUT_DIR}")
+    except Exception as e:
+        print(f"Error creating output directory {OUTPUT_DIR}: \n{e}")
         return 
 
-def create_files_from(file_dir):
-    """Combines head, header, footer and foot files with the pages or posts files to create an HTML file."""
-    # Read header and footer contents
-    head_content = read_file_content(HEAD_FILE)
-    header_content = read_file_content(HEADER_FILE)
-    footer_content = read_file_content(FOOTER_FILE)
-    foot_content = read_file_content(FOOT_FILE)
+def create_files_from_pages():
+    """Take every every file in the pages folder and apply a template, then convert to HTML, if not already, and place in the appropriate path in the docs folder."""
 
-    if not head_content or not foot_content:
-        print("head.html or foot.html is missing content. Aborting.")
-        return
+    for item in PAGES_DIR.rglob("*"):
+        relative_path = item.relative_to(PAGES_DIR)
+        static_path = OUTPUT_DIR / relative_path
+        # print(item)
+        # print(f'relative path = {relative_path}')
+        # print(f'static path = {static_path}')
+        # print(type(static_path))
 
-    # Create the output directory
-    try:
-        # if it's the pages directory, then don't create a subdirectory of docs
-        if file_dir.name == 'pages':
-            output_dir = OUTPUT_DIR
-        else:
-            output_dir = OUTPUT_DIR/file_dir.name
-            output_dir.mkdir(exist_ok=True)
-            print(f"Successfully created {output_dir} directory.")
-    except:
-        print(f"Error: Could not create {output_dir}.")
-    
-    # Path.walk returns dirpath, dirnames, filenames
-    for root, _, files in Path.walk(file_dir):
-        for file in files:
-            # Full path to the input file
-            input_path = file_dir/file
-            # Determine relative path to preserve directory structure
-            rel_path = input_path.name
-            output_path = output_dir/rel_path
+        # Create all sub-folders here
+        if item.is_dir():
+            # print(f'Make folder: {relative_path}')
+            static_path.mkdir(parents=True, exist_ok=True) 
 
-            # Process .html files
-            if file.lower().endswith(".html"):
-                # Read, modify, and write content
-                with open(input_path, "r", encoding="utf-8") as in_file:
-                    content = in_file.read()
-                
-                new_content = f"{head_content}\n{header_content}\n{content}\n{footer_content}\n{foot_content}"
-                
-                with open(output_path, "w", encoding="utf-8") as outfile:
-                    outfile.write(new_content)
-                
-                print(f"Processed: {input_path} → {output_path}")
-            # Process .md files
-            elif file.lower().endswith(".md"):
-                # Read, modify, and write content
-                with open(input_path, "r", encoding="utf-8") as in_file:
-                    content = in_file.read()
-                
-                # convert markdown to HTML
-                html_content = markdown.markdown(content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
-                
-                new_content = f"{head_content}\n{header_content}\n<section id='md-wrap'>\n{html_content}\n</section>\n{footer_content}\n{foot_content}"
+        elif item.is_file():
+            # Create the path to the file
+            # static_file_path = static_path.parent.mkdir(parents=True, exist_ok=True)
+            # print(static_file_path)
+            # print(type(static_file_path))
 
-                with open(output_path, "w", encoding="utf-8") as outfile:
-                    outfile.write(new_content)
-                
-                # Change the extension
-                new_out_path = output_path.rename(output_path.with_suffix(".html"))
+            # if file is an HTML file
+            if item.suffix == ".html":
+                # if the file has no YAML
+                if frontmatter.check(item) == False:
+                    # then copy as is without transformation 
+                    item.copy(static_path)
 
-                print(f"Processed: {input_path} (MD) → {new_out_path} (HTML)")
+                else:
+                    # set the layout template
+                    if 'layout' in file_contents.metadata:
+                        template = file_contents['layout']
+                    else:
+                        template = DEFAULT_TEMPLATE
+                        
+                    # get contents of the template file
+                    template_file = Path(f"{LAYOUT_DIR}/{template}.html")
+                    template_contents = template_file.read_text()
+
+                    # get contents of the file
+                    file_contents = frontmatter.load(item)
+                    
+                    # replace the placeholder with the file's content
+                    final_contents = template_contents.replace("{> CONTENT <}", file_contents.content)
+
+                    # write the content to the new static file
+                    static_path.write_text(final_contents)
+
+                    # TODO: Do something with the frontmatter variables?
+                        
+            # if the file is a Markdown file
+            elif item.suffix == '.md':
+                # if the file has no YAML
+                if frontmatter.check(item) == False:
+                    # apply the default template
+                    template = DEFAULT_TEMPLATE
+
+                    # get contents of the template file
+                    template_file = Path(f"{LAYOUT_DIR}/{template}.html")
+                    template_contents = template_file.read_text()
+
+                    # convert file contents to HTML
+                    html_content = markdown.markdown(item.read_text(), extensions=["attr_list", "fenced_code", "tables", "codehilite"])
+
+                    # replace the placeholder with file contents
+                    final_contents = template_contents.replace("{> CONTENT <}", html_content)
+
+                    # write the HTML to the new static file
+                    static_path.with_suffix(".html").write_text(final_contents)
+
+                # then process
+                else:
+                    # get the template
+                    file_contents = frontmatter.load(item)
+
+                    # set the layout template
+                    if 'layout' in file_contents.metadata:
+                        template = file_contents['layout']
+                    else:
+                        template = DEFAULT_TEMPLATE
+
+                    # get contents of the template file
+                    template_file = Path(f"{LAYOUT_DIR}/{template}.html")
+                    template_contents = template_file.read_text()
+
+                    html_content = markdown.markdown(file_contents.content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
+                    # replace the placeholder with the file's content
+                    final_contents = template_contents.replace("{> CONTENT <}", html_content)
+
+                    # write the content to the new static file
+                    static_path.with_suffix(".html").write_text(final_contents)
+
+            # otherwise ignore the file
             else:
-                # Just copy non-HTML files as-is
-                with open(input_path, "rb") as src, open(output_path, "wb") as dst:
-                    dst.write(src.read())
-                print(f"Copied (no change): {input_path} → {output_path}")
+                continue
+
 
 def create_files():
-    """Calls the create_files_from function to create posts and pages and copies the public folder to the OUTPUT_DIR directory"""
+    """Calls the create_files_from_pages function, and copies the public folder and the CNAME file if it exists to the output folder"""
 
     # Call the create_files_from function to create the pages
-    create_files_from(PAGES_DIR)
-
-    # Call the create_files_from function to create the posts
-    create_files_from(POSTS_DIR)
+    create_files_from_pages()
 
     # Copy CNAME file for GitHub pages with custom domain name
     if Path("CNAME").is_file():
