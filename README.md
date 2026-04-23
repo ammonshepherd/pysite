@@ -70,7 +70,7 @@ An HTML or Markdown file selects which template to use in the YAML frontmatter o
     template: page
 
 
-#### Folder: pages
+#### Folder: `pages`
 These files contain the content of the webpage.
 
 HTML and Markdown files inside the `pages` folder will be turned into HTML files to be served. Each file's content will inserted into the placeholder section of the specified template file.
