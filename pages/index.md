@@ -1,4 +1,3 @@
-
 # Pysite
 A Super Simple Static Site Creator written in Python.
 
@@ -46,7 +45,7 @@ The names of these folders can be changed in the `pysite.py` file.
 
 #### Folders: Top-level folders
 
-Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, and files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them and converted to HTML files. 
+Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
 
 ![pages folder to docs folder](/public/images/pages-folder.png){: .image-border}
 
