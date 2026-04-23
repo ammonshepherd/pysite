@@ -14,7 +14,7 @@ At the very basics, this script will take every HTML and Markdown file in a give
 
 Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited from the template file.
 
-![Multiple files compiled into one HTML file.](/public/images/file-assembly.png){: .image-border}
+![Multiple files compiled into one HTML file.](public/images/file-assembly.png){: .image-border}
 
 
 # Installation
@@ -47,11 +47,11 @@ The names of these folders can be changed in the `pysite.py` file.
 
 Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
 
-![pages folder to docs folder](/public/images/pages-folder.png){: .image-border}
+![pages folder to docs folder](public/images/pages-folder.png){: .image-border}
 
 Any files and folders in the `public` folder will be copied exactly without alteration into the static output folder, including the `public` folder.
 
-![public folder to docs folder](/public/images/public-folder.png){: .image-border}
+![public folder to docs folder](public/images/public-folder.png){: .image-border}
 
 
 #### Folder: `layout`
@@ -109,7 +109,7 @@ The `docs` folder can be copied to a web host to be served as the static website
 
 If using GitHub Pages, select the `docs` folder as the folder to build the site from.
 
-![GitHub Pages built from docs folder in the main branch](/public/images/github-pages.png){: .image-border}
+![GitHub Pages built from docs folder in the main branch](public/images/github-pages.png){: .image-border}
 
 ### Files
 
