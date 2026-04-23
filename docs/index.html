@@ -11,10 +11,9 @@
 </head>
 <body>
     <div class="logo">
-        <img alt="A python driving a Chevy Chevelle SS" src="/public/images/pysite-logo.webp">
+        <img alt="A python driving a Chevy Chevelle SS" src="public/images/pysite-logo.webp">
     </div>
     <main>
-        <h1>Page Template</h1>
 
         <h1>Pysite</h1>
 <p>A Super Simple Static Site Creator written in Python.</p>
@@ -49,20 +48,20 @@
 <h3>Folders</h3>
 <p>Create the following folders in your project folder:</p>
 <ul>
-<li>layout/</li>
+<li>template/</li>
 <li>pages/</li>
 <li>public/</li>
 </ul>
 <p>The names of these folders can be changed in the <code>pysite.py</code> file.</p>
 <h4>Folders: Top-level folders</h4>
-<p>Any file or folder at the top level of the project (the same level as the <code>pages</code>, <code>public</code> and <code>layout</code> folders) will be ignored. Any file in the <code>pages</code> folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the <code>pages</code> folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. </p>
+<p>Any file or folder at the top level of the project (the same level as the <code>pages</code>, <code>public</code> and <code>template</code> folders) will be ignored. Any file in the <code>pages</code> folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the <code>pages</code> folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. </p>
 <p><img alt="pages folder to docs folder" class="image-border" src="public/images/pages-folder.png" /></p>
 <p>Any files and folders in the <code>public</code> folder will be copied exactly without alteration into the static output folder, including the <code>public</code> folder.</p>
 <p><img alt="public folder to docs folder" class="image-border" src="public/images/public-folder.png" /></p>
-<h4>Folder: <code>layout</code></h4>
-<p>Inside the <code>layout</code> folder, create any number of template files. For example:</p>
+<h4>Folder: <code>template</code></h4>
+<p>Inside the <code>template</code> folder, create any number of template files. For example:</p>
 <ul>
-<li>layout/<ul>
+<li>template/<ul>
 <li><code>page.html</code> Is a page template. This file contains all of the HTML, with a placeholder, to create a 'page' page of the website.</li>
 <li><code>post.html</code> Is a post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.</li>
 </ul>
@@ -104,7 +103,7 @@
 </ul>
 <p>Access the files in these folders in your HTML and Markdown as absolute paths:</p>
 <p>The file <code>public/images/logo.png</code> is accessed like <code>&lt;img alt="alt description" src="/public/images/logo.png"&gt;</code> for HTML and <code>![alt description](/public/images/logo.png)</code> for Markdown.</p>
-<p>The CSS file can be accessed in the <code>layout/head.html</code> file like so: <code>&lt;link rel="stylesheet" href="/public/css/style.css"&gt;</code></p>
+<p>The CSS file can be accessed in the <code>template/head.html</code> file like so: <code>&lt;link rel="stylesheet" href="/public/css/style.css"&gt;</code></p>
 <h4>Folders: <code>docs</code></h4>
 <p>After the <code>pysite.py</code> or <code>server.py</code> script is executed (<code>python pysite.py</code> or <code>python server.py</code>), a <code>docs</code> folder is created and populated with files from the <code>pages</code> and <code>public</code> folders. All of the files in the <code>pages</code> folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the <code>docs</code> folder. The <code>docs</code> folder is deleted and recreated every time the <code>pysite.py</code> or <code>server.py</code> script is executed.</p>
 <p>The <code>docs</code> folder can be copied to a web host to be served as the static website. </p>
@@ -112,9 +111,9 @@
 <p><img alt="GitHub Pages built from docs folder in the main branch" class="image-border" src="public/images/github-pages.png" /></p>
 <h3>Files</h3>
 <h4>Files in the top-level folder</h4>
-<p>All files in the top-level folder of the project (the same level as the <code>pages</code>, <code>public</code> and <code>layout</code> folders) are ignored.</p>
-<h4>Files in <code>layout</code> folder</h4>
-<p>Any file in the <code>layout</code> folder is considered a template. It should be a full HTML file with</p>
+<p>All files in the top-level folder of the project (the same level as the <code>pages</code>, <code>public</code> and <code>template</code> folders) are ignored.</p>
+<h4>Files in <code>template</code> folder</h4>
+<p>Any file in the <code>template</code> folder is considered a template. It should be a full HTML file with</p>
 <p><code>{&gt; CONTENT &lt;}</code> </p>
 <p>placed where the content of files from the <code>pages</code> directory should go.</p>
 <p>A simple pages template might look like:</p>
@@ -146,7 +145,7 @@
 &lt;/html&gt;
 </code></pre>
 
-<p>At least one template file must exist. The default is to look for a <code>layout/page.html</code> file. This setting can be changed in <code>pysite.py</code>.</p>
+<p>At least one template file must exist. The default is to look for a <code>template/page.html</code> file. This setting can be changed in <code>pysite.py</code>.</p>
 <p><code>DEFAULT_TEMPLATE = 'page'</code></p>
 <h4>Files in the <code>pages</code> folder</h4>
 <p>All files in the <code>pages</code> folder and any sub-folders will have a template applied and then copied into the respective folder in the <code>docs</code> folder. </p>
@@ -155,22 +154,22 @@
 title: 'HTML page example'
 author: 'Ammon Shepherd'
 date: '2026-04-13 21:23:33'
-layout: post
+template: post
 ---
 </code></pre>
 
-<p>The default template is applied when no YAML or no layout: option is provided.</p>
+<p>The default template is applied when no YAML or no <code>temlpate:</code> option is provided.</p>
 <p>Any variable in the YAML frontmatter can be used as a variable in the file and template using double curly braces and the variable name.</p>
 <p>For example, a blog post can look like this:</p>
 <pre class="codehilite"><code>---
 title: 'Blog post example'
 author: 'Ammon Shepherd'
 date: '2026-04-13 21:23:33'
-layout: post
+template: post
 ---
-# {{title}}
+# 
 
-Date: {{date}}
+Date: 
 
 Here's my first blog post using this way cool static site generator.
 
@@ -178,7 +177,7 @@ Here's a picture of Pete, my pet python!
 
 ![python picture](/public/images/pete-python.png)
 
-Author: {{author}}
+Author: 
 </code></pre>
 
 <p>The post template could use the title variable like so:</p>
@@ -187,7 +186,7 @@ Author: {{author}}
 &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;&gt;
     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-    &lt;title&gt;{{title}}&lt;/title&gt;
+    &lt;title&gt;&lt;/title&gt;
 </code></pre>
 
 <h4>Files in the <code>public</code> folder</h4>

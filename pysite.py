@@ -3,6 +3,7 @@ import shutil
 import markdown
 from pathlib import Path
 import frontmatter
+from jinja2 import Template as yamlify
 
 # TODO:
 # - add template functionality 
@@ -10,7 +11,7 @@ import frontmatter
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
 # Define the source and destination paths
-LAYOUT_DIR = BASE_DIR/'layout'
+TEMPLATE_DIR = BASE_DIR/'template'
 PAGES_DIR = BASE_DIR/'pages'
 PUBLIC_DIR = BASE_DIR/'public'
 OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
@@ -36,103 +37,46 @@ def create_output_directory():
         print(f"Error creating output directory {OUTPUT_DIR}: \n{e}")
         return 
 
+def convert_file_contents(file):
+    """Pass a file path and pass the contents through Jinja2 and Markdown parsers
+       Returns the converted file contents"""
+    # get contents of the file
+    file_contents = frontmatter.load(file)
+    # get the template or set a default
+    template = file_contents.get('template', DEFAULT_TEMPLATE)
+    # get contents of the template file
+    template_file = Path(f"{TEMPLATE_DIR}/{template}.html")
+    template_contents = template_file.read_text()
+    # Use Jinja2 to convert all the variables in the content
+    yamlified = yamlify(file_contents.content)
+    converted_contents = yamlified.render(**file_contents.metadata)
+    file_contents.content = converted_contents
+    # Use Markdown parser to convert all Markdown to HTML (leaving native HTML untouched)
+    htmlified = markdown.markdown(file_contents.content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
+    # replace the template's placeholder with the file's yamlified and htmlified content
+    final_contents = template_contents.replace("{> CONTENT <}", htmlified)
+    return final_contents
+    
 def create_files_from_pages():
-    """Take every every file in the pages folder and apply a template, then convert to HTML, if not already, and place in the appropriate path in the docs folder."""
+    """Take every every file in the pages folder and apply a template, convert to HTML, if not already, and place in the appropriate path in the docs folder."""
 
     for item in PAGES_DIR.rglob("*"):
-        relative_path = item.relative_to(PAGES_DIR)
-        static_path = OUTPUT_DIR / relative_path
-        # print(item)
-        # print(f'relative path = {relative_path}')
-        # print(f'static path = {static_path}')
-        # print(type(static_path))
-
-        # Create all sub-folders here
+        # Create the static path for the file/folder
+        static_path = OUTPUT_DIR / item.relative_to(PAGES_DIR)
+        # Create folders
         if item.is_dir():
-            # print(f'Make folder: {relative_path}')
             static_path.mkdir(parents=True, exist_ok=True) 
-
+        # Create files
         elif item.is_file():
-            # Create the path to the file
-            # static_file_path = static_path.parent.mkdir(parents=True, exist_ok=True)
-            # print(static_file_path)
-            # print(type(static_file_path))
-
-            # if file is an HTML file
-            if item.suffix == ".html":
-                # if the file has no YAML
-                if frontmatter.check(item) == False:
-                    # then copy as is without transformation 
-                    item.copy(static_path)
-
-                else:
-                    # set the layout template
-                    if 'layout' in file_contents.metadata:
-                        template = file_contents['layout']
-                    else:
-                        template = DEFAULT_TEMPLATE
-                        
-                    # get contents of the template file
-                    template_file = Path(f"{LAYOUT_DIR}/{template}.html")
-                    template_contents = template_file.read_text()
-
-                    # get contents of the file
-                    file_contents = frontmatter.load(item)
-                    
-                    # replace the placeholder with the file's content
-                    final_contents = template_contents.replace("{> CONTENT <}", file_contents.content)
-
-                    # write the content to the new static file
-                    static_path.write_text(final_contents)
-
-                    # TODO: Do something with the frontmatter variables?
-                        
-            # if the file is a Markdown file
-            elif item.suffix == '.md':
-                # if the file has no YAML
-                if frontmatter.check(item) == False:
-                    # apply the default template
-                    template = DEFAULT_TEMPLATE
-
-                    # get contents of the template file
-                    template_file = Path(f"{LAYOUT_DIR}/{template}.html")
-                    template_contents = template_file.read_text()
-
-                    # convert file contents to HTML
-                    html_content = markdown.markdown(item.read_text(), extensions=["attr_list", "fenced_code", "tables", "codehilite"])
-
-                    # replace the placeholder with file contents
-                    final_contents = template_contents.replace("{> CONTENT <}", html_content)
-
-                    # write the HTML to the new static file
-                    static_path.with_suffix(".html").write_text(final_contents)
-
-                # then process
-                else:
-                    # get the template
-                    file_contents = frontmatter.load(item)
-
-                    # set the layout template
-                    if 'layout' in file_contents.metadata:
-                        template = file_contents['layout']
-                    else:
-                        template = DEFAULT_TEMPLATE
-
-                    # get contents of the template file
-                    template_file = Path(f"{LAYOUT_DIR}/{template}.html")
-                    template_contents = template_file.read_text()
-
-                    html_content = markdown.markdown(file_contents.content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
-                    # replace the placeholder with the file's content
-                    final_contents = template_contents.replace("{> CONTENT <}", html_content)
-
-                    # write the content to the new static file
-                    static_path.with_suffix(".html").write_text(final_contents)
-
-            # otherwise ignore the file
+            # if file is an HTML file and has no YAML
+            if item.suffix == ".html" and frontmatter.check(item) == False:
+                # then copy as is without transformation 
+                item.copy(static_path)
             else:
-                continue
-
+                # pass the file through jinja2 and markdown parsers
+                new_content = convert_file_contents(item)
+                # write the new static file
+                static_path.with_suffix(".html").write_text(new_content)
 
 def create_files():
     """Calls the create_files_from_pages function, and copies the public folder and the CNAME file if it exists to the output folder"""

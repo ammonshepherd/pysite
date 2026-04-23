@@ -37,7 +37,7 @@ Each HTML or Markdown file from the selected folder will now have the same heade
 ### Folders
 Create the following folders in your project folder:
 
-  - layout/
+  - template/
   - pages/
   - public/
 
@@ -45,7 +45,7 @@ The names of these folders can be changed in the `pysite.py` file.
 
 #### Folders: Top-level folders
 
-Any file or folder at the top level of the project (the same level as the `pages`, `public` and `layout` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
+Any file or folder at the top level of the project (the same level as the `pages`, `public` and `template` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
 
 ![pages folder to docs folder](public/images/pages-folder.png){: .image-border}
 
@@ -54,10 +54,10 @@ Any files and folders in the `public` folder will be copied exactly without alte
 ![public folder to docs folder](public/images/public-folder.png){: .image-border}
 
 
-#### Folder: `layout`
-Inside the `layout` folder, create any number of template files. For example:
+#### Folder: `template`
+Inside the `template` folder, create any number of template files. For example:
 
-- layout/
+- template/
     - `page.html` Is a page template. This file contains all of the HTML, with a placeholder, to create a 'page' page of the website.
     - `post.html` Is a post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.
 
@@ -99,7 +99,7 @@ Access the files in these folders in your HTML and Markdown as absolute paths:
 
 The file `public/images/logo.png` is accessed like `<img alt="alt description" src="/public/images/logo.png">` for HTML and `![alt description](/public/images/logo.png)` for Markdown.
 
-The CSS file can be accessed in the `layout/head.html` file like so: `<link rel="stylesheet" href="/public/css/style.css">`
+The CSS file can be accessed in the `template/head.html` file like so: `<link rel="stylesheet" href="/public/css/style.css">`
 
 #### Folders: `docs`
 
@@ -115,11 +115,11 @@ If using GitHub Pages, select the `docs` folder as the folder to build the site 
 
 #### Files in the top-level folder 
 
-All files in the top-level folder of the project (the same level as the `pages`, `public` and `layout` folders) are ignored.
+All files in the top-level folder of the project (the same level as the `pages`, `public` and `template` folders) are ignored.
 
-#### Files in `layout` folder
+#### Files in `template` folder
 
-Any file in the `layout` folder is considered a template. It should be a full HTML file with
+Any file in the `template` folder is considered a template. It should be a full HTML file with
 
 `{> CONTENT <}` 
 
@@ -156,7 +156,7 @@ A simple pages template might look like:
 </html>
 ```
 
-At least one template file must exist. The default is to look for a `layout/page.html` file. This setting can be changed in `pysite.py`.
+At least one template file must exist. The default is to look for a `template/page.html` file. This setting can be changed in `pysite.py`.
 
 `DEFAULT_TEMPLATE = 'page'`
 
@@ -171,11 +171,11 @@ Each file can have a YAML frontmatter (even HTML files) to tell the application 
 title: 'HTML page example'
 author: 'Ammon Shepherd'
 date: '2026-04-13 21:23:33'
-layout: post
+template: post
 ---
 ```
 
-The default template is applied when no YAML or no layout: option is provided.
+The default template is applied when no YAML or no `temlpate:` option is provided.
 
 Any variable in the YAML frontmatter can be used as a variable in the file and template using double curly braces and the variable name.
 
@@ -186,7 +186,7 @@ For example, a blog post can look like this:
 title: 'Blog post example'
 author: 'Ammon Shepherd'
 date: '2026-04-13 21:23:33'
-layout: post
+template: post
 ---
 # {{title}}
 
