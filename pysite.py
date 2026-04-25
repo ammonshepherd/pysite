@@ -84,10 +84,9 @@ def get_sorted_posts(folder_path):
 def create_files_from_pages():
     """Take every every file in the pages folder and apply a template, convert to HTML, if not already, and place in the appropriate path in the docs folder."""
 
+    posts_list = []
     if Path(PAGES_DIR/'posts').is_dir():
         posts_list = get_sorted_posts(PAGES_DIR/'posts')
-    else:
-        posts_list = []
 
     for item in PAGES_DIR.rglob("*"):
         # Create the static path for the file/folder
@@ -139,7 +138,19 @@ def create_files():
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def create_posts_page():
+    posts_list = []
+    if Path(PAGES_DIR/'posts').is_dir():
+        posts_list = get_sorted_posts(PAGES_DIR/'posts')
+    content = ''
+    for post in posts_list:
+        content += f"\n\t<a href='/posts/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
+    template_file = Path(f"{TEMPLATE_DIR}/posts-index.html")
+    template_contents = template_file.read_text() 
+    templated_content = template_contents.replace("{> CONTENT <}", content) 
+    Path(OUTPUT_DIR/'posts'/'index.html').write_text(templated_content)
 
 if __name__ == '__main__':
     create_output_directory()
     create_files()
+    create_posts_page()

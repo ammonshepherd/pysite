@@ -37,6 +37,22 @@ main img {
     height: 20vh;
 }
 
+#navigation {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+}
+#navigation a {
+    background-color: whitesmoke;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+#navigation a:hover {
+    background-color: purple;
+    color: white;
+}
 .image-border {
     border: 1px solid grey;
     border-radius: 4px;
@@ -62,4 +78,18 @@ main img {
 
 .post_nav nav p a {
     text-decoration: none;
+}
+
+.posts-index {
+    display: flex;
+    flex-flow: column;
+}
+.posts-index a {
+    text-decoration: none;
+    color: green;
+}
+.posts-index a:hover {
+    color: blue;
+    text-decoration: underline;
+    
 }
