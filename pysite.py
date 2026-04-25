@@ -5,15 +5,12 @@ from pathlib import Path
 import frontmatter
 from jinja2 import Template as yamlify
 
-# TODO:
-# - add template functionality 
-
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
 # Define the source and destination paths
 TEMPLATE_DIR = BASE_DIR/'template'
-PAGES_DIR = BASE_DIR/'pages'
 PUBLIC_DIR = BASE_DIR/'public'
+PAGES_DIR = BASE_DIR/'pages'
 OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
 DEFAULT_TEMPLATE = 'page'
 
@@ -37,28 +34,60 @@ def create_output_directory():
         print(f"Error creating output directory {OUTPUT_DIR}: \n{e}")
         return 
 
-def convert_file_contents(file):
+def convert_file_contents(file, prev_post, next_post):
     """Pass a file path and pass the contents through Jinja2 and Markdown parsers
        Returns the converted file contents"""
     # get contents of the file
     file_contents = frontmatter.load(file)
+
+    # add the prev and next metadata to the file's YAML
+    if prev_post is not None:
+        file_contents['prev_post_url'] = f'/posts/{prev_post['filename']}'
+        file_contents['prev_post_title'] = prev_post['title']
+    if next_post is not None:
+        file_contents['next_post_url'] = f'/posts/{next_post['filename']}'
+        file_contents['next_post_title'] = next_post['title']
+
     # get the template or set a default
     template = file_contents.get('template', DEFAULT_TEMPLATE)
     # get contents of the template file
     template_file = Path(f"{TEMPLATE_DIR}/{template}.html")
     template_contents = template_file.read_text()
+    
     # Use Jinja2 to convert all the variables in the content
     yamlified = yamlify(file_contents.content)
     converted_contents = yamlified.render(**file_contents.metadata)
-    file_contents.content = converted_contents
     # Use Markdown parser to convert all Markdown to HTML (leaving native HTML untouched)
-    htmlified = markdown.markdown(file_contents.content, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
+    htmlified = markdown.markdown(converted_contents, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
     # replace the template's placeholder with the file's yamlified and htmlified content
-    final_contents = template_contents.replace("{> CONTENT <}", htmlified)
-    return final_contents
+    templated_content = template_contents.replace("{> CONTENT <}", htmlified)
+
+    # Go over the templated content with Jinja2 again to convert the prev, next links
+    final_yamilfy = yamlify(templated_content)
+    return final_yamilfy.render(**file_contents.metadata)
     
+def get_sorted_posts(folder_path):
+    posts = []
+    for file_path in Path(folder_path).glob("*"):
+        post = frontmatter.load(file_path)
+        post_date = post.get('date', '1900-01-01')
+        post_title = post.get('title', None)
+        posts.append({
+            "filename": file_path.with_suffix(".html").name,
+            "date": post_date,
+            "title": post_title
+        })
+    posts.sort(key=lambda x: str(x['date']), reverse=False)
+    return posts
+
+
 def create_files_from_pages():
     """Take every every file in the pages folder and apply a template, convert to HTML, if not already, and place in the appropriate path in the docs folder."""
+
+    if Path(PAGES_DIR/'posts').is_dir():
+        posts_list = get_sorted_posts(PAGES_DIR/'posts')
+    else:
+        posts_list = []
 
     for item in PAGES_DIR.rglob("*"):
         # Create the static path for the file/folder
@@ -73,8 +102,22 @@ def create_files_from_pages():
                 # then copy as is without transformation 
                 item.copy(static_path)
             else:
+                prev_post = None
+                next_post = None
+                if 'posts' in str(static_path):
+                    item_index = None
+                    # Get the index # in the posts_list list of the current file
+                    for i, file in enumerate(posts_list):
+                        if file['filename'] == item.with_suffix(".html").name:
+                            item_index = i
+                            break
+                    # if there is an index number, get the data from array and store in variables
+                    if item_index is not None:
+                        prev_post = posts_list[item_index - 1] if item_index > 0 else None
+                        next_post = posts_list[item_index + 1] if item_index < len(posts_list) - 1 else None
+
                 # pass the file through jinja2 and markdown parsers
-                new_content = convert_file_contents(item)
+                new_content = convert_file_contents(item, prev_post, next_post)
                 # write the new static file
                 static_path.with_suffix(".html").write_text(new_content)
 

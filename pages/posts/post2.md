@@ -1,7 +1,7 @@
 ---
 title: 'A Markdown Post'
 author: 'Ammon Shepherd'
-date: '2026-04-13 21:24:44'
+date: '2026-04-2 21:24:44'
 template: post
 ---
 # A post example

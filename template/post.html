@@ -18,5 +18,16 @@
         {> CONTENT <}
 
     </main>
+    <div class="post_nav">
+        <nav>
+            {% if prev_post_url %}
+                Previous Entry: <a href="{{ prev_post_url }}">← {{ prev_post_title }}</a>
+            {% endif %}
+            
+            {% if next_post_url %}
+                Next Entry: <a href="{{ next_post_url }}">{{ next_post_title }} →</a>
+            {% endif %}
+        </nav>
+    </div>
 </body>
 </html>

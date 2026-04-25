@@ -77,6 +77,10 @@ The combined HTML file is named the same as the file name in the `pages` folder.
 
 Therefore, a file at `pages/about/me.md` will be turned into `docs/about/me.html` and will be accessible at the URL `https://website.com/about/me.html`.
 
+#### Folder: `pages/posts`
+
+To have a blog, create a `posts` folder inside the `pages` folder. Every file in the `posts` folder should have YAML with at least the date, title, and template fields. This is required for automatically creating the 'previous' and 'next' post links.
+
 
 #### Folder: `public`
 The files and folders in the `public/` folder will be copied recursively to the `docs` folder without alteration.
@@ -103,7 +107,7 @@ The CSS file can be accessed in the `template/head.html` file like so: `<link re
 
 #### Folders: `docs`
 
-After the `pysite.py` or `server.py` script is executed (`python pysite.py` or `python server.py`), a `docs` folder is created and populated with files from the `pages` and `public` folders. All of the files in the `pages` folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the `docs` folder. The `docs` folder is deleted and recreated every time the `pysite.py` or `server.py` script is executed.
+After the `pysite.py` or `server.py` script is executed (by running `python pysite.py` or `python server.py` in the terminal), a `docs` folder is created and populated with files from the `pages` and `public` folders. All of the files in the `pages` folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the `docs` folder. The `docs` folder is deleted and recreated every time the `pysite.py` or `server.py` script is executed.
 
 The `docs` folder can be copied to a web host to be served as the static website. 
 
@@ -111,13 +115,15 @@ If using GitHub Pages, select the `docs` folder as the folder to build the site 
 
 ![GitHub Pages built from docs folder in the main branch](public/images/github-pages.png){: .image-border}
 
+The name of the static files output folder can be changed in the `pysite.py` file.
+
 ### Files
 
 #### Files in the top-level folder 
 
 All files in the top-level folder of the project (the same level as the `pages`, `public` and `template` folders) are ignored.
 
-#### Files in `template` folder
+#### Files in the `template` folder
 
 Any file in the `template` folder is considered a template. It should be a full HTML file with
 
@@ -212,6 +218,8 @@ The post template could use the title variable like so:
     <title>{{title}}</title>
 ```
 
+[Jijna2](https://jinja.palletsprojects.com/en/stable/) is used for converting template variables, so any Jinja2 templating is allowed.
+
 #### Files in the `public` folder
 
 Any file in the `public` folder is copied exactly, without any alteration, into the `docs/public/` folder or sub-folder. All files in the `public` folder are accessible directly in the URL at their respective location.
@@ -224,7 +232,7 @@ After your site's files are created, run the following command in the terminal
 
 ```python server.py```
 
-This will create the `docs` folder, create any files and folders, and place them in the appropriate locations, then start an HTML server. 
+This will create the `docs` folder, create and convert any files and folders, and place them in the appropriate locations, then start an HTML server. 
 
 For development testing, you can view the site at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
@@ -234,4 +242,3 @@ You can transfer the files from the `docs` folder to your web host for static fi
 
 If using GitHub Pages, choose to serve files from the `docs` folder. 
 
-The name of the static files output folder can be changed in the `pysite.py` file.

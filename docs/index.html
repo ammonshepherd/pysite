@@ -77,6 +77,8 @@
 <p>HTML and Markdown files inside the <code>pages</code> folder will be turned into HTML files to be served. Each file's content will inserted into the placeholder section of the specified template file.</p>
 <p>The combined HTML file is named the same as the file name in the <code>pages</code> folder. All files and folders in the <code>pages</code> folder will be recreated in the <code>docs</code> folder with paths, folders and file names preserved. </p>
 <p>Therefore, a file at <code>pages/about/me.md</code> will be turned into <code>docs/about/me.html</code> and will be accessible at the URL <code>https://website.com/about/me.html</code>.</p>
+<h4>Folder: <code>pages/posts</code></h4>
+<p>To have a blog, create a <code>posts</code> folder inside the <code>pages</code> folder. Every file in the <code>posts</code> folder should have YAML with at least the date, title, and template fields. This is required for automatically creating the 'previous' and 'next' post links.</p>
 <h4>Folder: <code>public</code></h4>
 <p>The files and folders in the <code>public/</code> folder will be copied recursively to the <code>docs</code> folder without alteration.</p>
 <p>This is where you put the images, css and Javascript. Suggested file structure:</p>
@@ -105,14 +107,15 @@
 <p>The file <code>public/images/logo.png</code> is accessed like <code>&lt;img alt="alt description" src="/public/images/logo.png"&gt;</code> for HTML and <code>![alt description](/public/images/logo.png)</code> for Markdown.</p>
 <p>The CSS file can be accessed in the <code>template/head.html</code> file like so: <code>&lt;link rel="stylesheet" href="/public/css/style.css"&gt;</code></p>
 <h4>Folders: <code>docs</code></h4>
-<p>After the <code>pysite.py</code> or <code>server.py</code> script is executed (<code>python pysite.py</code> or <code>python server.py</code>), a <code>docs</code> folder is created and populated with files from the <code>pages</code> and <code>public</code> folders. All of the files in the <code>pages</code> folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the <code>docs</code> folder. The <code>docs</code> folder is deleted and recreated every time the <code>pysite.py</code> or <code>server.py</code> script is executed.</p>
+<p>After the <code>pysite.py</code> or <code>server.py</code> script is executed (by running <code>python pysite.py</code> or <code>python server.py</code> in the terminal), a <code>docs</code> folder is created and populated with files from the <code>pages</code> and <code>public</code> folders. All of the files in the <code>pages</code> folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the <code>docs</code> folder. The <code>docs</code> folder is deleted and recreated every time the <code>pysite.py</code> or <code>server.py</code> script is executed.</p>
 <p>The <code>docs</code> folder can be copied to a web host to be served as the static website. </p>
 <p>If using GitHub Pages, select the <code>docs</code> folder as the folder to build the site from.</p>
 <p><img alt="GitHub Pages built from docs folder in the main branch" class="image-border" src="public/images/github-pages.png" /></p>
+<p>The name of the static files output folder can be changed in the <code>pysite.py</code> file.</p>
 <h3>Files</h3>
 <h4>Files in the top-level folder</h4>
 <p>All files in the top-level folder of the project (the same level as the <code>pages</code>, <code>public</code> and <code>template</code> folders) are ignored.</p>
-<h4>Files in <code>template</code> folder</h4>
+<h4>Files in the <code>template</code> folder</h4>
 <p>Any file in the <code>template</code> folder is considered a template. It should be a full HTML file with</p>
 <p><code>{&gt; CONTENT &lt;}</code> </p>
 <p>placed where the content of files from the <code>pages</code> directory should go.</p>
@@ -189,18 +192,18 @@ Author:
     &lt;title&gt;&lt;/title&gt;
 </code></pre>
 
+<p><a href="https://jinja.palletsprojects.com/en/stable/">Jijna2</a> is used for converting template variables, so any Jinja2 templating is allowed.</p>
 <h4>Files in the <code>public</code> folder</h4>
 <p>Any file in the <code>public</code> folder is copied exactly, without any alteration, into the <code>docs/public/</code> folder or sub-folder. All files in the <code>public</code> folder are accessible directly in the URL at their respective location.</p>
 <p>For example, a file at <code>public/css/style.css</code> is available at <code>https://website.com/public/css/style.css</code> in the browser.</p>
 <h2>Usage</h2>
 <p>After your site's files are created, run the following command in the terminal</p>
 <p><code>python server.py</code></p>
-<p>This will create the <code>docs</code> folder, create any files and folders, and place them in the appropriate locations, then start an HTML server. </p>
+<p>This will create the <code>docs</code> folder, create and convert any files and folders, and place them in the appropriate locations, then start an HTML server. </p>
 <p>For development testing, you can view the site at <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a></p>
 <p>The server will notice changes to files every second and restart the server so you can refresh the browser to the latest changes.</p>
 <p>You can transfer the files from the <code>docs</code> folder to your web host for static file serving glory! </p>
-<p>If using GitHub Pages, choose to serve files from the <code>docs</code> folder. </p>
-<p>The name of the static files output folder can be changed in the <code>pysite.py</code> file.</p>
+<p>If using GitHub Pages, choose to serve files from the <code>docs</code> folder.</p>
 
     </main>
 </body>
