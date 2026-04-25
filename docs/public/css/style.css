@@ -42,3 +42,24 @@ main img {
     border-radius: 4px;
     box-shadow: 3px 3px 10px #dedede;
 }
+
+.post_nav nav {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.post_nav h3 {
+    text-align: center;
+}
+
+.post_nav nav p {
+    background: white;
+    padding: 20px;
+    margin: 4px;
+    border-radius: 4px;
+}
+
+.post_nav nav p a {
+    text-decoration: none;
+}

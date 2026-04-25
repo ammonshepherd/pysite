@@ -19,13 +19,14 @@
 
     </main>
     <div class="post_nav">
+        <h3>Posts</h3>
         <nav>
             {% if prev_post_url %}
-                Previous Entry: <a href="{{ prev_post_url }}">← {{ prev_post_title }}</a>
+                <p><a href="{{ prev_post_url }}">← {{ prev_post_title }}</a></p>
             {% endif %}
             
             {% if next_post_url %}
-                Next Entry: <a href="{{ next_post_url }}">{{ next_post_title }} →</a>
+                <p><a href="{{ next_post_url }}">{{ next_post_title }} →</a></p>
             {% endif %}
         </nav>
     </div>
