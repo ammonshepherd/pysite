@@ -13,6 +13,7 @@ PUBLIC_DIR = BASE_DIR/'public'
 PAGES_DIR = BASE_DIR/'pages'
 OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
 DEFAULT_TEMPLATE = 'page'
+POSTS_DIR = 'posts'
 
 def read_file_content(filepath):
     """Reads and returns the content of a file."""
@@ -42,10 +43,10 @@ def convert_file_contents(file, prev_post, next_post):
 
     # add the prev and next metadata to the file's YAML
     if prev_post is not None:
-        file_contents['prev_post_url'] = f'/posts/{prev_post['filename']}'
+        file_contents['prev_post_url'] = f'/{POSTS_DIR}/{prev_post['filename']}'
         file_contents['prev_post_title'] = prev_post['title']
     if next_post is not None:
-        file_contents['next_post_url'] = f'/posts/{next_post['filename']}'
+        file_contents['next_post_url'] = f'/{POSTS_DIR}/{next_post['filename']}'
         file_contents['next_post_title'] = next_post['title']
 
     # get the template or set a default
@@ -85,8 +86,8 @@ def create_files_from_pages():
     """Take every every file in the pages folder and apply a template, convert to HTML, if not already, and place in the appropriate path in the docs folder."""
 
     posts_list = []
-    if Path(PAGES_DIR/'posts').is_dir():
-        posts_list = get_sorted_posts(PAGES_DIR/'posts')
+    if Path(PAGES_DIR/POSTS_DIR).is_dir():
+        posts_list = get_sorted_posts(PAGES_DIR/POSTS_DIR)
 
     for item in PAGES_DIR.rglob("*"):
         # Create the static path for the file/folder
@@ -103,7 +104,7 @@ def create_files_from_pages():
             else:
                 prev_post = None
                 next_post = None
-                if 'posts' in str(static_path):
+                if POSTS_DIR in str(static_path):
                     item_index = None
                     # Get the index # in the posts_list list of the current file
                     for i, file in enumerate(posts_list):
@@ -140,15 +141,15 @@ def create_files():
 
 def create_posts_page():
     posts_list = []
-    if Path(PAGES_DIR/'posts').is_dir():
-        posts_list = get_sorted_posts(PAGES_DIR/'posts')
+    if Path(PAGES_DIR/POSTS_DIR).is_dir():
+        posts_list = get_sorted_posts(PAGES_DIR/POSTS_DIR)
     content = ''
     for post in posts_list:
-        content += f"\n\t<a href='/posts/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
+        content += f"\n\t<a href='/{POSTS_DIR}/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
     template_file = Path(f"{TEMPLATE_DIR}/posts-index.html")
     template_contents = template_file.read_text() 
     templated_content = template_contents.replace("{> CONTENT <}", content) 
-    Path(OUTPUT_DIR/'posts'/'index.html').write_text(templated_content)
+    Path(OUTPUT_DIR/POSTS_DIR/'index.html').write_text(templated_content)
 
 if __name__ == '__main__':
     create_output_directory()
