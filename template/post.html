@@ -7,15 +7,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="{{base_url}}/public/css/style.css">
 </head>
 <body>
     <div class="logo">
-        <img alt="A python driving a Chevy Chevelle SS" src="/public/images/pysite-logo.webp">
+        <img alt="A python driving a Chevy Chevelle SS" src="{{base_url}}/public/images/pysite-logo.webp">
     </div>
     <nav id="navigation">
-        <a href="/">HOME</a>
-        <a href="/posts/">POSTS</a>
+        <a href="{{base_url}}/">HOME</a>
+        <a href="{{base_url}}/posts/">POSTS</a>
     </nav>
     <main>
 
@@ -23,14 +23,14 @@
 
     </main>
     <div class="post_nav">
-        <h3><a href="/posts/">Posts</a></h3>
+        <h3><a href="{{base_url}}/posts/">Posts</a></h3>
         <nav>
             {% if prev_post_url %}
-                <p><a href="{{ prev_post_url }}">← {{ prev_post_title }}</a></p>
+                <p><a href="{{base_url}}/{{ prev_post_url }}">← {{ prev_post_title }}</a></p>
             {% endif %}
             
             {% if next_post_url %}
-                <p><a href="{{ next_post_url }}">{{ next_post_title }} →</a></p>
+                <p><a href="{{base_url}}/{{ next_post_url }}">{{ next_post_title }} →</a></p>
             {% endif %}
         </nav>
     </div>
