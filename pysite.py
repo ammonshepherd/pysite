@@ -14,13 +14,16 @@ PAGES_DIR = BASE_DIR/'pages'
 OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
 DEFAULT_TEMPLATE = 'page'
 POSTS_DIR = 'posts'
+POST_INDEX_TEMPLATE = 'posts-index.html'
 
 # Set the base url if your site is served from a subdirectory
 # ex. website.com/mysite/
-# run as `python pysite.py /mysite`
+# run as `python pysite.py s` The script just checks for an 
+# argument/option after the filename, so anything works
 BASE_URL = ''
 if len(sys.argv) > 1:
-    BASE_URL = sys.argv[1]
+    # BASE_URL = sys.argv[1]
+    BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
     
 
 def read_file_content(filepath):
@@ -69,7 +72,7 @@ def convert_file_contents(file, prev_post, next_post):
     yamlified = yamlify(file_contents.content)
     converted_contents = yamlified.render(**file_contents.metadata)
     # Use Markdown parser to convert all Markdown to HTML (leaving native HTML untouched)
-    htmlified = markdown.markdown(converted_contents, extensions=["attr_list", "fenced_code", "tables", "codehilite"])
+    htmlified = markdown.markdown(converted_contents, extensions=["attr_list", "fenced_code", "tables", "codehilite", "toc"])
     # replace the template's placeholder with the file's yamlified and htmlified content
     templated_content = template_contents.replace("{> CONTENT <}", htmlified)
 
@@ -151,16 +154,18 @@ def create_files():
 
 def create_post_index_page():
     posts_list = []
-    if Path(PAGES_DIR/POSTS_DIR).is_dir():
+    if Path(PAGES_DIR/POSTS_DIR).is_dir() and Path(TEMPLATE_DIR/POST_INDEX_TEMPLATE).is_file:
         posts_list = get_sorted_posts(PAGES_DIR/POSTS_DIR)
-    content = ''
-    for post in posts_list:
-        content += f"\n\t<a href='{BASE_URL}/{POSTS_DIR}/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
-    template_file = Path(f"{TEMPLATE_DIR}/posts-index.html")
-    template_contents = template_file.read_text() 
-    templated_content = template_contents.replace("{> CONTENT <}", content) 
-    templated_content = templated_content.replace("{{base_url}}", BASE_URL) 
-    Path(OUTPUT_DIR/POSTS_DIR/'index.html').write_text(templated_content)
+        content = ''
+        for post in posts_list:
+            content += f"\n\t<a href='{BASE_URL}/{POSTS_DIR}/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
+        template_file = Path(TEMPLATE_DIR/POST_INDEX_TEMPLATE)
+        template_contents = template_file.read_text() 
+        templated_content = template_contents.replace("{> CONTENT <}", content) 
+        templated_content = templated_content.replace("{{base_url}}", BASE_URL) 
+        Path(OUTPUT_DIR/POSTS_DIR/'index.html').write_text(templated_content)
+    else:
+        return
 
 if __name__ == '__main__':
     create_output_directory()

@@ -1,20 +1,24 @@
 # Pysite
 A Super Simple Static Site Creator written in Python.
 
-
 # Requirements
 
 - Python 3.14+
+  - These packages
+  - markdown
+  - frontmatter
+  - jinja2
+  - watchdog
 - Terminal and Code Editor (VS Code)
 
 
 # What it does
 
-At the very basics, this script will take every HTML and Markdown file in a given set of folders and insert the contents of that file into a template, creating a new HTML file. 
+At the very basics, this script will take every HTML and Markdown file in a given folder and insert the contents of that file into a template, creating a new HTML file. 
 
 Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited from the template file.
 
-![Multiple files compiled into one HTML file.](public/images/file-assembly.png){: .image-border}
+![Multiple files compiled into one HTML file.]({{base_url}}/public/images/file-assembly.png){: image-border}
 
 
 # Installation
@@ -47,11 +51,11 @@ The names of these folders can be changed in the `pysite.py` file.
 
 Any file or folder at the top level of the project (the same level as the `pages`, `public` and `template` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
 
-![pages folder to docs folder](public/images/pages-folder.png){: .image-border}
+![pages folder to docs folder]({{base_url}}/public/images/pages-folder.png){: image-border}
 
 Any files and folders in the `public` folder will be copied exactly without alteration into the static output folder, including the `public` folder.
 
-![public folder to docs folder](public/images/public-folder.png){: .image-border}
+![public folder to docs folder]({{base_url}}/public/images/public-folder.png){: image-border}
 
 
 #### Folder: `template`
@@ -65,8 +69,11 @@ Other template files can be created here. Each of these files should contain the
 
 An HTML or Markdown file selects which template to use in the YAML frontmatter of the file:
 
-    template: page
-
+```
+---
+template: page
+---
+```
 
 #### Folder: `pages`
 These files contain the content of the webpage.
@@ -80,6 +87,8 @@ Therefore, a file at `pages/about/me.md` will be turned into `docs/about/me.html
 #### Folder: `pages/posts`
 
 To have a blog, create a `posts` folder inside the `pages` folder. Every file in the `posts` folder should have YAML with at least the date, title, and template fields. This is required for automatically creating the 'previous' and 'next' post links.
+
+If the `pages/posts` folder exists and a posts index template file exists, then a posts index page is automatically created. Make sure to create a template file for the post index page and set the name in the `pysite.py` file. The default filename is `posts-index.html`.
 
 
 #### Folder: `public`
@@ -101,9 +110,11 @@ This is where you put the images, css and Javascript. Suggested file structure:
 
 Access the files in these folders in your HTML and Markdown as absolute paths:
 
-The file `public/images/logo.png` is accessed like `<img alt="alt description" src="/public/images/logo.png">` for HTML and `![alt description](/public/images/logo.png)` for Markdown.
+The file `public/images/logo.png` is accessed like `<img alt="alt description" src="{{base_url}}/public/images/logo.png">` for HTML and `![alt description]({{base_url}}/public/images/logo.png)` for Markdown.
 
-The CSS file can be accessed in the `template/head.html` file like so: `<link rel="stylesheet" href="/public/css/style.css">`
+The CSS file can be accessed in the template file `template/page.html` file like so: `<link rel="stylesheet" href="{{base_url}}/public/css/style.css">`
+
+See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of `{{base_url}}`.
 
 #### Folders: `docs`
 
@@ -113,7 +124,7 @@ The `docs` folder can be copied to a web host to be served as the static website
 
 If using GitHub Pages, select the `docs` folder as the folder to build the site from.
 
-![GitHub Pages built from docs folder in the main branch](public/images/github-pages.png){: .image-border}
+![GitHub Pages built from docs folder in the main branch]({{base_url}}/public/images/github-pages.png){: image-border}
 
 The name of the static files output folder can be changed in the `pysite.py` file.
 
@@ -140,17 +151,17 @@ A simple pages template might look like:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Groovy Website</title>
-    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="{{base_url}}/public/css/style.css">
 </head>
 <body>
     <div class="logo">
-        <img alt="My logo" src="/public/images/logo.webp">
+        <img alt="My logo" src="{{base_url}}/public/images/logo.webp">
     </div>
     <header>
       <nav>
-        <a href="/">HOME</a>
-        <a href="/posts">Blog</a>
-        <a href="/about">About</a>
+        <a href="{{base_url}}/">HOME</a>
+        <a href="{{base_url}}/posts">Blog</a>
+        <a href="{{base_url}}/about">About</a>
       </nav>
     </header>
     <main>
@@ -161,6 +172,7 @@ A simple pages template might look like:
 </body>
 </html>
 ```
+See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of `{{base_url}}`.
 
 At least one template file must exist. The default is to look for a `template/page.html` file. This setting can be changed in `pysite.py`.
 
@@ -181,7 +193,7 @@ template: post
 ---
 ```
 
-The default template is applied when no YAML or no `temlpate:` option is provided.
+The default template is applied when no YAML or no `temlpate:` option is provided, except for HTML files in the `pages` folder without YAML frontmatter. HTML files without YAML frontmatter are copied exactly without alteration to the output folder.
 
 Any variable in the YAML frontmatter can be used as a variable in the file and template using double curly braces and the variable name.
 
@@ -202,7 +214,7 @@ Here's my first blog post using this way cool static site generator.
 
 Here's a picture of Pete, my pet python!
 
-![python picture](/public/images/pete-python.png)
+![python picture]({{base_url}}/public/images/pete-python.png)
 
 Author: {{author}}
 ```
@@ -220,15 +232,62 @@ The post template could use the title variable like so:
 
 [Jijna2](https://jinja.palletsprojects.com/en/stable/) is used for converting template variables, so any Jinja2 templating is allowed.
 
+See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of `{{base_url}}`.
+
 #### Files in the `public` folder
 
 Any file in the `public` folder is copied exactly, without any alteration, into the `docs/public/` folder or sub-folder. All files in the `public` folder are accessible directly in the URL at their respective location.
 
 For example, a file at `public/css/style.css` is available at `https://website.com/public/css/style.css` in the browser.
 
-## Usage
+## URL Subdirectory
 
-After your site's files are created, run the following command in the terminal
+To help in cases where the website is located at `website.com/mysite/`, the Jinja template variable `{{base_url}}` is used in template, Markdown and HTML files. Every URL reference to internal files should begin with `{{base_url}}`
+
+For example, in an HTML file you can create a link to the about page stored in `pages/about.html` like this:
+
+```
+<a href="{{base_url}}/about.html">About Me</a>
+```
+
+The `{{base_url}}` is automatically converted to the specified subdirectory for your website.
+
+By default, `{{base_url}}` is empty, nothing. This allows you to run the `python server.py` script to test the site locally without the subdirectory affecting the URL. (This may change in a future version.)
+
+You will only activate the `{{base_url}}` ability when creating the static version of the files to send to your hosting provider. 
+
+To activate the `{{base_url}}` ability, run the `pysite.py` script like so:
+
+`python pysite.py -b`
+
+The script checks for an option or argument after the script, so any text will do. Simply using the letter `b` will work; or typing out the full subdirectory `/mysite` might be easier to remember.
+
+## Configuration Settings
+All settings that can be changed are in the `pysite.py` file.
+
+```
+# Define the source and destination paths
+TEMPLATE_DIR = BASE_DIR/'template'
+PUBLIC_DIR = BASE_DIR/'public'
+PAGES_DIR = BASE_DIR/'pages'
+OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
+DEFAULT_TEMPLATE = 'page'
+POSTS_DIR = 'posts'
+POST_INDEX_TEMPLATE = 'posts-index.html'
+
+# Set the base url if your site is served from a subdirectory
+# ex. website.com/mysite/
+# run as `python pysite.py s` The script just checks for an 
+# argument/option after the filename, so anything works
+BASE_URL = ''
+if len(sys.argv) > 1:
+    # BASE_URL = sys.argv[1]
+    BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
+```
+
+# Usage
+
+After your site's template(s) and files are created in the `pages`, `public` and `template` folders, run the following command in the terminal
 
 ```python server.py```
 
@@ -240,5 +299,15 @@ The server will notice changes to files every second and restart the server so y
 
 You can transfer the files from the `docs` folder to your web host for static file serving glory! 
 
-If using GitHub Pages, choose to serve files from the `docs` folder. 
+If using GitHub Pages, change GitHub settings to serve files from the `docs` folder. When the site is ready run
 
+```python pysite.py -b```
+
+to create the files with the appropriate base URL. Remember to set the BASE_URL variable in `pysite.py` first.
+
+
+# Example Pages
+
+[Example Posts Index]({{base_url}}/posts/)
+
+[Example About Page]({{base_url}}/about.html)
