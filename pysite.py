@@ -3,7 +3,7 @@ import shutil
 import markdown
 from pathlib import Path
 import frontmatter
-from jinja2 import Template as yamlify
+from jinja2 import Environment, FileSystemLoader, Template
 
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
@@ -22,9 +22,9 @@ POST_INDEX_TEMPLATE = 'posts-index.html'
 # argument/option after the filename, so anything works
 BASE_URL = ''
 if len(sys.argv) > 1:
-    # BASE_URL = sys.argv[1]
     BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
     
+template_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
 def read_file_content(filepath):
     """Reads and returns the content of a file."""
@@ -59,26 +59,26 @@ def convert_file_contents(file, prev_post, next_post):
     if next_post is not None:
         file_contents['next_post_url'] = f'{POSTS_DIR}/{next_post['filename']}'
         file_contents['next_post_title'] = next_post['title']
-
     # Add BASE_URL to YAML
     file_contents['base_url'] = BASE_URL
+
+    # Create the content using the template's content and the file's contents
+    body_template = template_env.from_string(file_contents.content)
+    # Convert all of the jinja variables in the content
+    resolved_body = body_template.render(**file_contents.metadata)
+    # convert all markdown to HTML if it exists
+    htmlified = markdown.markdown(resolved_body, extensions=["attr_list", "fenced_code", "tables", "codehilite", "toc"])
+
     # get the template or set a default
     template = file_contents.get('template', DEFAULT_TEMPLATE)
-    # get contents of the template file
-    template_file = Path(f"{TEMPLATE_DIR}/{template}.html")
-    template_contents = template_file.read_text()
-    
-    # Use Jinja2 to convert all the variables in the content
-    yamlified = yamlify(file_contents.content)
-    converted_contents = yamlified.render(**file_contents.metadata)
-    # Use Markdown parser to convert all Markdown to HTML (leaving native HTML untouched)
-    htmlified = markdown.markdown(converted_contents, extensions=["attr_list", "fenced_code", "tables", "codehilite", "toc"])
-    # replace the template's placeholder with the file's yamlified and htmlified content
-    templated_content = template_contents.replace("{> CONTENT <}", htmlified)
-
-    # Go over the templated content with Jinja2 again to convert the prev, next links
-    final_yamilfy = yamlify(templated_content)
-    return final_yamilfy.render(**file_contents.metadata)
+    # Put together the templates into one content
+    template_content = template_env.get_template(f'{template}.html')
+    # create the final output content
+    output = template_content.render(
+        content=htmlified,
+        **file_contents.metadata
+    )
+    return output
     
 def get_sorted_posts(folder_path):
     posts = []
@@ -159,11 +159,24 @@ def create_post_index_page():
         content = ''
         for post in posts_list:
             content += f"\n\t<a href='{BASE_URL}/{POSTS_DIR}/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
-        template_file = Path(TEMPLATE_DIR/POST_INDEX_TEMPLATE)
-        template_contents = template_file.read_text() 
-        templated_content = template_contents.replace("{> CONTENT <}", content) 
-        templated_content = templated_content.replace("{{base_url}}", BASE_URL) 
-        Path(OUTPUT_DIR/POSTS_DIR/'index.html').write_text(templated_content)
+
+        # load the content into a frontmatter object and add metadata
+        page = frontmatter.loads(content)
+        page['title'] = 'Posts Index Page'
+        page['base_url'] = BASE_URL
+
+        # Create the content using the template's content and the file's contents
+        body_template = template_env.from_string(page.content)
+        # Convert all of the jinja variables in the content
+        resolved_content = body_template.render(**page.metadata)
+
+        template_content = template_env.get_template(POST_INDEX_TEMPLATE)
+        output = template_content.render(
+            content=resolved_content,
+            **page.metadata
+        )
+
+        Path(OUTPUT_DIR/POSTS_DIR/'index.html').write_text(output)
     else:
         return
 

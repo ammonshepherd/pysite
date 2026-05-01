@@ -1,14 +1,16 @@
 # Pysite
 A Super Simple Static Site Creator written in Python.
 
+[GitHub Repository](https://github.com/ammonshepherd/pysite)
+
 # Requirements
 
 - Python 3.14+
   - These packages
-  - markdown
-  - frontmatter
-  - jinja2
-  - watchdog
+    - markdown
+    - frontmatter
+    - jinja2
+    - watchdog
 - Terminal and Code Editor (VS Code)
 
 
@@ -62,10 +64,11 @@ Any files and folders in the `public` folder will be copied exactly without alte
 Inside the `template` folder, create any number of template files. For example:
 
 - template/
+    - `base.html` is the base template. This contains the basic head and footer tags. Other template files can use this as the base for their template. This allows all template files to use the same head and footer.
     - `page.html` Is a page template. This file contains all of the HTML, with a placeholder, to create a 'page' page of the website.
     - `post.html` Is a post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.
 
-Other template files can be created here. Each of these files should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.
+Other template files can be created here. The `base.html` file should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.
 
 An HTML or Markdown file selects which template to use in the YAML frontmatter of the file:
 
@@ -110,11 +113,13 @@ This is where you put the images, css and Javascript. Suggested file structure:
 
 Access the files in these folders in your HTML and Markdown as absolute paths:
 
+{% raw %}
 The file `public/images/logo.png` is accessed like `<img alt="alt description" src="{{base_url}}/public/images/logo.png">` for HTML and `![alt description]({{base_url}}/public/images/logo.png)` for Markdown.
 
-The CSS file can be accessed in the template file `template/page.html` file like so: `<link rel="stylesheet" href="{{base_url}}/public/css/style.css">`
+The CSS file can be accessed in the template file `template/base.html` file like so: `<link rel="stylesheet" href="{{base_url}}/public/css/style.css">`
+{% endraw %}
 
-See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of `{{base_url}}`.
+See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of {% raw %}`{{base_url}}`{% endraw %}.
 
 #### Folders: `docs`
 
@@ -136,14 +141,18 @@ All files in the top-level folder of the project (the same level as the `pages`,
 
 #### Files in the `template` folder
 
-Any file in the `template` folder is considered a template. It should be a full HTML file with
+Any file in the `template` folder is considered a template. It can be a full HTML file with
 
-`{> CONTENT <}` 
+
+{% raw %}
+`{{ content }}` 
+{% endraw %}
 
 placed where the content of files from the `pages` directory should go.
 
 A simple pages template might look like:
 
+{% raw %}
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -166,17 +175,64 @@ A simple pages template might look like:
     </header>
     <main>
 
-        {> CONTENT <}
+        {{ content }}
 
     </main>
 </body>
 </html>
 ```
-See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of `{{base_url}}`.
+{% endraw %}
+
+See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of {% raw %}`{{base_url}}`{% endraw %}.
 
 At least one template file must exist. The default is to look for a `template/page.html` file. This setting can be changed in `pysite.py`.
 
 `DEFAULT_TEMPLATE = 'page'`
+
+##### Template Hierarchy
+Jinja Template Hierarchy is enabled so creating a base template that other templates pull from is possible. This makes it easy to have an HTML head and footer section that is the same for all templates.
+
+A simple base template could be:
+
+[template/base.html]
+{% raw %}
+```    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{base_url}}/public/css/style.css">
+</head>
+<body>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>
+```
+
+The page template would then look like this:
+
+[template/page.html]
+```
+{% extends "base.html" %}
+{% block title %}PySite: Python Based Super Simple Static Site Generator{% endblock %}
+{% block content %}
+    <div class="logo">
+        <img alt="A python driving a Chevy Chevelle SS" src="{{base_url}}/public/images/pysite-logo.webp">
+    </div>
+    <main>
+
+        {{ content }}
+
+    </main>
+{% endblock %}
+```
+{% endraw %}
+
+When all conversion and rendering are done, the Jinja variables are converted and the base.html, page.html and the original file's content are all combined into one HTML page.
 
 #### Files in the `pages` folder
 
@@ -199,6 +255,7 @@ Any variable in the YAML frontmatter can be used as a variable in the file and t
 
 For example, a blog post can look like this:
 
+{% raw %}
 ```
 ---
 title: 'Blog post example'
@@ -227,22 +284,30 @@ The post template could use the title variable like so:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
+    <title>MySite Post: {{title}}</title>
 ```
+
+Or like this if using template hierarchy
+```
+{% extends "base.html" %}
+{% block title %}MySite Post: {{title}}{% endblock %}
+```
+{% endraw %}
 
 [Jijna2](https://jinja.palletsprojects.com/en/stable/) is used for converting template variables, so any Jinja2 templating is allowed.
 
-See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of `{{base_url}}`.
+See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of {% raw %}`{{base_url}}`{% endraw %}.
 
 #### Files in the `public` folder
 
 Any file in the `public` folder is copied exactly, without any alteration, into the `docs/public/` folder or sub-folder. All files in the `public` folder are accessible directly in the URL at their respective location.
 
-For example, a file at `public/css/style.css` is available at `https://website.com/public/css/style.css` in the browser.
+For example, a file at `public/css/style.css` is available at `https://website.com/public/css/style.css` in the browser, or at `https://website.com/mysite/public/css/style.css` if there is a URL subdirectory.
 
 ## URL Subdirectory
 
-To help in cases where the website is located at `website.com/mysite/`, the Jinja template variable `{{base_url}}` is used in template, Markdown and HTML files. Every URL reference to internal files should begin with `{{base_url}}`
+{% raw %}
+To help in cases where the website is located at `https://website.com/mysite/`, the Jinja template variable `{{base_url}}` is used in template, Markdown and HTML files. Every URL reference to internal files should begin with `{{base_url}}`
 
 For example, in an HTML file you can create a link to the about page stored in `pages/about.html` like this:
 
@@ -257,6 +322,7 @@ By default, `{{base_url}}` is empty, nothing. This allows you to run the `python
 You will only activate the `{{base_url}}` ability when creating the static version of the files to send to your hosting provider. 
 
 To activate the `{{base_url}}` ability, run the `pysite.py` script like so:
+{% endraw %}
 
 `python pysite.py -b`
 
@@ -281,7 +347,6 @@ POST_INDEX_TEMPLATE = 'posts-index.html'
 # argument/option after the filename, so anything works
 BASE_URL = ''
 if len(sys.argv) > 1:
-    # BASE_URL = sys.argv[1]
     BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
 ```
 
@@ -310,4 +375,4 @@ to create the files with the appropriate base URL. Remember to set the BASE_URL 
 
 [Example Posts Index]({{base_url}}/posts/)
 
-[Example About Page]({{base_url}}/about.html)
+[Example About Page]({{base_url}}/about.html) - A stand-alone HTML file without any rendering or conversion

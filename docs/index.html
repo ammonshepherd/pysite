@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PySite: Python Based Static Site Generator</title>
+    <title>PySite: Python Based Super Simple Static Site Generator</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Sen:wght@400..800&family=Titan+One&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/pysite/public/css/style.css">
 </head>
 <body>
+
+    
     <div class="logo">
         <img alt="A python driving a Chevy Chevelle SS" src="/pysite/public/images/pysite-logo.webp">
     </div>
@@ -17,14 +21,17 @@
 
         <h1 id="pysite">Pysite</h1>
 <p>A Super Simple Static Site Creator written in Python.</p>
+<p><a href="https://github.com/ammonshepherd/pysite">GitHub Repository</a></p>
 <h1 id="requirements">Requirements</h1>
 <ul>
 <li>Python 3.14+</li>
-<li>These packages</li>
+<li>These packages<ul>
 <li>markdown</li>
 <li>frontmatter</li>
 <li>jinja2</li>
 <li>watchdog</li>
+</ul>
+</li>
 <li>Terminal and Code Editor (VS Code)</li>
 </ul>
 <h1 id="what-it-does">What it does</h1>
@@ -67,12 +74,13 @@
 <p>Inside the <code>template</code> folder, create any number of template files. For example:</p>
 <ul>
 <li>template/<ul>
+<li><code>base.html</code> is the base template. This contains the basic head and footer tags. Other template files can use this as the base for their template. This allows all template files to use the same head and footer.</li>
 <li><code>page.html</code> Is a page template. This file contains all of the HTML, with a placeholder, to create a 'page' page of the website.</li>
 <li><code>post.html</code> Is a post template. This file contains all of the HTML, with a placeholder, to create a 'post' page of the website.</li>
 </ul>
 </li>
 </ul>
-<p>Other template files can be created here. Each of these files should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.</p>
+<p>Other template files can be created here. The <code>base.html</code> file should contain the basic HTML structure (!DOCTYPE, &lt;html&gt;, &lt;title&gt;, &lt;link&gt;, &lt;meta&gt;, &lt;body&gt;, &lt;main&gt;, etc... and their corresponding closing tags) to create a page of the website.</p>
 <p>An HTML or Markdown file selects which template to use in the YAML frontmatter of the file:</p>
 <pre class="codehilite"><code>---
 template: page
@@ -112,9 +120,9 @@ template: page
 </li>
 </ul>
 <p>Access the files in these folders in your HTML and Markdown as absolute paths:</p>
-<p>The file <code>public/images/logo.png</code> is accessed like <code>&lt;img alt="alt description" src="/pysite/public/images/logo.png"&gt;</code> for HTML and <code>![alt description](/pysite/public/images/logo.png)</code> for Markdown.</p>
-<p>The CSS file can be accessed in the template file <code>template/page.html</code> file like so: <code>&lt;link rel="stylesheet" href="/pysite/public/css/style.css"&gt;</code></p>
-<p>See <a href="/pysite/#url-subdirectory">base_url</a> for more information on the use of <code>/pysite</code>.</p>
+<p>The file <code>public/images/logo.png</code> is accessed like <code>&lt;img alt="alt description" src="{{base_url}}/public/images/logo.png"&gt;</code> for HTML and <code>![alt description]({{base_url}}/public/images/logo.png)</code> for Markdown.</p>
+<p>The CSS file can be accessed in the template file <code>template/base.html</code> file like so: <code>&lt;link rel="stylesheet" href="{{base_url}}/public/css/style.css"&gt;</code></p>
+<p>See <a href="/pysite/#url-subdirectory">base_url</a> for more information on the use of <code>{{base_url}}</code>.</p>
 <h4 id="folders-docs">Folders: <code>docs</code></h4>
 <p>After the <code>pysite.py</code> or <code>server.py</code> script is executed (by running <code>python pysite.py</code> or <code>python server.py</code> in the terminal), a <code>docs</code> folder is created and populated with files from the <code>pages</code> and <code>public</code> folders. All of the files in the <code>pages</code> folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the <code>docs</code> folder. The <code>docs</code> folder is deleted and recreated every time the <code>pysite.py</code> or <code>server.py</code> script is executed.</p>
 <p>The <code>docs</code> folder can be copied to a web host to be served as the static website. </p>
@@ -125,8 +133,8 @@ template: page
 <h4 id="files-in-the-top-level-folder">Files in the top-level folder</h4>
 <p>All files in the top-level folder of the project (the same level as the <code>pages</code>, <code>public</code> and <code>template</code> folders) are ignored.</p>
 <h4 id="files-in-the-template-folder">Files in the <code>template</code> folder</h4>
-<p>Any file in the <code>template</code> folder is considered a template. It should be a full HTML file with</p>
-<p><code>{&gt; CONTENT &lt;}</code> </p>
+<p>Any file in the <code>template</code> folder is considered a template. It can be a full HTML file with</p>
+<p><code>{{ content }}</code> </p>
 <p>placed where the content of files from the <code>pages</code> directory should go.</p>
 <p>A simple pages template might look like:</p>
 <pre class="codehilite"><code>&lt;!DOCTYPE html&gt;
@@ -135,31 +143,68 @@ template: page
     &lt;meta charset=&quot;UTF-8&quot;&gt;
     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
     &lt;title&gt;My Groovy Website&lt;/title&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;/pysite/public/css/style.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;{{base_url}}/public/css/style.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div class=&quot;logo&quot;&gt;
-        &lt;img alt=&quot;My logo&quot; src=&quot;/pysite/public/images/logo.webp&quot;&gt;
+        &lt;img alt=&quot;My logo&quot; src=&quot;{{base_url}}/public/images/logo.webp&quot;&gt;
     &lt;/div&gt;
     &lt;header&gt;
       &lt;nav&gt;
-        &lt;a href=&quot;/pysite/&quot;&gt;HOME&lt;/a&gt;
-        &lt;a href=&quot;/pysite/posts&quot;&gt;Blog&lt;/a&gt;
-        &lt;a href=&quot;/pysite/about&quot;&gt;About&lt;/a&gt;
+        &lt;a href=&quot;{{base_url}}/&quot;&gt;HOME&lt;/a&gt;
+        &lt;a href=&quot;{{base_url}}/posts&quot;&gt;Blog&lt;/a&gt;
+        &lt;a href=&quot;{{base_url}}/about&quot;&gt;About&lt;/a&gt;
       &lt;/nav&gt;
     &lt;/header&gt;
     &lt;main&gt;
 
-        {&gt; CONTENT &lt;}
+        {{ content }}
 
     &lt;/main&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
 
-<p>See <a href="/pysite/#url-subdirectory">base_url</a> for more information on the use of <code>/pysite</code>.</p>
+<p>See <a href="/pysite/#url-subdirectory">base_url</a> for more information on the use of <code>{{base_url}}</code>.</p>
 <p>At least one template file must exist. The default is to look for a <code>template/page.html</code> file. This setting can be changed in <code>pysite.py</code>.</p>
 <p><code>DEFAULT_TEMPLATE = 'page'</code></p>
+<h5 id="template-hierarchy">Template Hierarchy</h5>
+<p>Jinja Template Hierarchy is enabled so creating a base template that other templates pull from is possible. This makes it easy to have an HTML head and footer section that is the same for all templates.</p>
+<p>A simple base template could be:</p>
+<p>[template/base.html]</p>
+<pre class="codehilite"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;{% block title %}{% endblock %}&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;{{base_url}}/public/css/style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    {% block content %}{% endblock %}
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>The page template would then look like this:</p>
+<p>[template/page.html]</p>
+<pre class="codehilite"><code>{% extends &quot;base.html&quot; %}
+{% block title %}PySite: Python Based Super Simple Static Site Generator{% endblock %}
+{% block content %}
+    &lt;div class=&quot;logo&quot;&gt;
+        &lt;img alt=&quot;A python driving a Chevy Chevelle SS&quot; src=&quot;{{base_url}}/public/images/pysite-logo.webp&quot;&gt;
+    &lt;/div&gt;
+    &lt;main&gt;
+
+        {{ content }}
+
+    &lt;/main&gt;
+{% endblock %}
+</code></pre>
+
+<p>When all conversion and rendering are done, the Jinja variables are converted and the base.html, page.html and the original file's content are all combined into one HTML page.</p>
 <h4 id="files-in-the-pages-folder">Files in the <code>pages</code> folder</h4>
 <p>All files in the <code>pages</code> folder and any sub-folders will have a template applied and then copied into the respective folder in the <code>docs</code> folder. </p>
 <p>Each file can have a YAML frontmatter (even HTML files) to tell the application which template to apply. YAML frontmatter can look like this:</p>
@@ -180,17 +225,17 @@ author: 'Ammon Shepherd'
 date: '2026-04-13 21:23:33'
 template: post
 ---
-# 
+# {{title}}
 
-Date: 
+Date: {{date}}
 
 Here's my first blog post using this way cool static site generator.
 
 Here's a picture of Pete, my pet python!
 
-![python picture](/pysite/public/images/pete-python.png)
+![python picture]({{base_url}}/public/images/pete-python.png)
 
-Author: 
+Author: {{author}}
 </code></pre>
 
 <p>The post template could use the title variable like so:</p>
@@ -199,24 +244,29 @@ Author:
 &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;&gt;
     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-    &lt;title&gt;&lt;/title&gt;
+    &lt;title&gt;MySite Post: {{title}}&lt;/title&gt;
+</code></pre>
+
+<p>Or like this if using template hierarchy</p>
+<pre class="codehilite"><code>{% extends &quot;base.html&quot; %}
+{% block title %}MySite Post: {{title}}{% endblock %}
 </code></pre>
 
 <p><a href="https://jinja.palletsprojects.com/en/stable/">Jijna2</a> is used for converting template variables, so any Jinja2 templating is allowed.</p>
-<p>See <a href="/pysite/#url-subdirectory">base_url</a> for more information on the use of <code>/pysite</code>.</p>
+<p>See <a href="/pysite/#url-subdirectory">base_url</a> for more information on the use of <code>{{base_url}}</code>.</p>
 <h4 id="files-in-the-public-folder">Files in the <code>public</code> folder</h4>
 <p>Any file in the <code>public</code> folder is copied exactly, without any alteration, into the <code>docs/public/</code> folder or sub-folder. All files in the <code>public</code> folder are accessible directly in the URL at their respective location.</p>
-<p>For example, a file at <code>public/css/style.css</code> is available at <code>https://website.com/public/css/style.css</code> in the browser.</p>
+<p>For example, a file at <code>public/css/style.css</code> is available at <code>https://website.com/public/css/style.css</code> in the browser, or at <code>https://website.com/mysite/public/css/style.css</code> if there is a URL subdirectory.</p>
 <h2 id="url-subdirectory">URL Subdirectory</h2>
-<p>To help in cases where the website is located at <code>website.com/mysite/</code>, the Jinja template variable <code>/pysite</code> is used in template, Markdown and HTML files. Every URL reference to internal files should begin with <code>/pysite</code></p>
+<p>To help in cases where the website is located at <code>https://website.com/mysite/</code>, the Jinja template variable <code>{{base_url}}</code> is used in template, Markdown and HTML files. Every URL reference to internal files should begin with <code>{{base_url}}</code></p>
 <p>For example, in an HTML file you can create a link to the about page stored in <code>pages/about.html</code> like this:</p>
-<pre class="codehilite"><code>&lt;a href=&quot;/pysite/about.html&quot;&gt;About Me&lt;/a&gt;
+<pre class="codehilite"><code>&lt;a href=&quot;{{base_url}}/about.html&quot;&gt;About Me&lt;/a&gt;
 </code></pre>
 
-<p>The <code>/pysite</code> is automatically converted to the specified subdirectory for your website.</p>
-<p>By default, <code>/pysite</code> is empty, nothing. This allows you to run the <code>python server.py</code> script to test the site locally without the subdirectory affecting the URL. (This may change in a future version.)</p>
-<p>You will only activate the <code>/pysite</code> ability when creating the static version of the files to send to your hosting provider. </p>
-<p>To activate the <code>/pysite</code> ability, run the <code>pysite.py</code> script like so:</p>
+<p>The <code>{{base_url}}</code> is automatically converted to the specified subdirectory for your website.</p>
+<p>By default, <code>{{base_url}}</code> is empty, nothing. This allows you to run the <code>python server.py</code> script to test the site locally without the subdirectory affecting the URL. (This may change in a future version.)</p>
+<p>You will only activate the <code>{{base_url}}</code> ability when creating the static version of the files to send to your hosting provider. </p>
+<p>To activate the <code>{{base_url}}</code> ability, run the <code>pysite.py</code> script like so:</p>
 <p><code>python pysite.py -b</code></p>
 <p>The script checks for an option or argument after the script, so any text will do. Simply using the letter <code>b</code> will work; or typing out the full subdirectory <code>/mysite</code> might be easier to remember.</p>
 <h2 id="configuration-settings">Configuration Settings</h2>
@@ -236,7 +286,6 @@ POST_INDEX_TEMPLATE = 'posts-index.html'
 # argument/option after the filename, so anything works
 BASE_URL = ''
 if len(sys.argv) &gt; 1:
-    # BASE_URL = sys.argv[1]
     BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
 </code></pre>
 
@@ -252,8 +301,10 @@ if len(sys.argv) &gt; 1:
 <p>to create the files with the appropriate base URL. Remember to set the BASE_URL variable in <code>pysite.py</code> first.</p>
 <h1 id="example-pages">Example Pages</h1>
 <p><a href="/pysite/posts/">Example Posts Index</a></p>
-<p><a href="/pysite/about.html">Example About Page</a></p>
+<p><a href="/pysite/about.html">Example About Page</a> - A stand-alone HTML file without any rendering or conversion</p>
 
     </main>
+
+
 </body>
 </html>
