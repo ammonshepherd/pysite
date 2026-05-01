@@ -37,7 +37,7 @@
 <h1 id="what-it-does">What it does</h1>
 <p>At the very basics, this script will take every HTML and Markdown file in a given folder and insert the contents of that file into a template, creating a new HTML file. </p>
 <p>Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited from the template file.</p>
-<p><img alt="Multiple files compiled into one HTML file." image-border="image-border" src="/pysite/public/images/file-assembly.png" /></p>
+<p><img alt="Multiple files compiled into one HTML file." class="image-border" src="/pysite/public/images/file-assembly.png" /></p>
 <h1 id="installation">Installation</h1>
 <ol>
 <li>
@@ -67,9 +67,9 @@
 <p>The names of these folders can be changed in the <code>pysite.py</code> file.</p>
 <h4 id="folders-top-level-folders">Folders: Top-level folders</h4>
 <p>Any file or folder at the top level of the project (the same level as the <code>pages</code>, <code>public</code> and <code>template</code> folders) will be ignored. Any file in the <code>pages</code> folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the <code>pages</code> folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. </p>
-<p><img alt="pages folder to docs folder" image-border="image-border" src="/pysite/public/images/pages-folder.png" /></p>
+<p><img alt="pages folder to docs folder" class="image-border" src="/pysite/public/images/pages-folder.png" /></p>
 <p>Any files and folders in the <code>public</code> folder will be copied exactly without alteration into the static output folder, including the <code>public</code> folder.</p>
-<p><img alt="public folder to docs folder" image-border="image-border" src="/pysite/public/images/public-folder.png" /></p>
+<p><img alt="public folder to docs folder" class="image-border" src="/pysite/public/images/public-folder.png" /></p>
 <h4 id="folder-template">Folder: <code>template</code></h4>
 <p>Inside the <code>template</code> folder, create any number of template files. For example:</p>
 <ul>
@@ -127,7 +127,7 @@ template: page
 <p>After the <code>pysite.py</code> or <code>server.py</code> script is executed (by running <code>python pysite.py</code> or <code>python server.py</code> in the terminal), a <code>docs</code> folder is created and populated with files from the <code>pages</code> and <code>public</code> folders. All of the files in the <code>pages</code> folder will have a specific template applied to them and converted to an HTML file (if not already), before being copied into it's respective folder in the <code>docs</code> folder. The <code>docs</code> folder is deleted and recreated every time the <code>pysite.py</code> or <code>server.py</code> script is executed.</p>
 <p>The <code>docs</code> folder can be copied to a web host to be served as the static website. </p>
 <p>If using GitHub Pages, select the <code>docs</code> folder as the folder to build the site from.</p>
-<p><img alt="GitHub Pages built from docs folder in the main branch" image-border="image-border" src="/pysite/public/images/github-pages.png" /></p>
+<p><img alt="GitHub Pages built from docs folder in the main branch" class="image-border" src="/pysite/public/images/github-pages.png" /></p>
 <p>The name of the static files output folder can be changed in the <code>pysite.py</code> file.</p>
 <h3 id="files">Files</h3>
 <h4 id="files-in-the-top-level-folder">Files in the top-level folder</h4>
