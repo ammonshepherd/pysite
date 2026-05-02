@@ -40,15 +40,38 @@ Each HTML or Markdown file from the selected folder will now have the same heade
 
 `pip install -r requirements.txt`
 
-## Site Setup
-### Folders
-Create the following folders in your project folder:
+## Create need folders and files
+Create the following folders and files in your project folder:
 
   - template/
+    - base.html
+    - page.html
+    - post.html
+    - posts-index.html
   - pages/
   - public/
+  - settings.yml
 
-The names of these folders can be changed in the `pysite.py` file.
+The `settings.yml` file should have the following content:
+```
+---
+template_dir: 'template'
+public_dir: 'public'
+pages_dir: 'pages'
+output_dir: 'docs' # use 'docs' to integrate with GitHub Pages
+default_template: 'page'
+posts_dir: 'posts'
+post_index_template: 'posts-index.html'
+base_url: '/pysite' # CHANGE to the subdirectory of your site
+---
+```
+
+See below for contents of the template files.
+
+## Project Structure
+### Folders
+
+The names of these folders can be changed in the `settings.yml` file.
 
 #### Folders: Top-level folders
 
@@ -92,7 +115,7 @@ Therefore, a file at `pages/about/me.md` will be turned into `docs/about/me.html
 
 To have a blog, create a `posts` folder inside the `pages` folder. Every file in the `posts` folder should have YAML with at least the date, title, and template fields. This is required for automatically creating the 'previous' and 'next' post links.
 
-If the `pages/posts` folder exists and a posts index template file exists, then a posts index page is automatically created. Make sure to create a template file for the post index page and set the name in the `pysite.py` file. The default filename is `posts-index.html`.
+If the `pages/posts` folder exists and a posts index template file exists, then a posts index page is automatically created. Make sure to create a template file for the post index page and set the name in the `settings.yml` file. The default filename is `posts-index.html`.
 
 
 #### Folder: `public`
@@ -130,7 +153,7 @@ If using GitHub Pages, select the `docs` folder as the folder to build the site 
 
 ![GitHub Pages built from docs folder in the main branch](github-pages.png)
 
-The name of the static files output folder can be changed in the `pysite.py` file.
+The name of the static files output folder can be changed in the `settings.yml` file.
 
 ### Files
 
@@ -178,7 +201,7 @@ A simple pages template might look like:
 ```
 See [base_url](#url-subdirectory) for more information on the use of `{{base_url}}`.
 
-At least one template file must exist. The default is to look for a `template/page.html` file. This setting can be changed in `pysite.py`.
+At least one template file must exist. The default is to look for a `template/page.html` file. This setting can be changed in `settings.yml`.
 
 `DEFAULT_TEMPLATE = 'page'`
 
@@ -315,28 +338,6 @@ To activate the `{{base_url}}` ability, run the `pysite.py` script like so:
 
 The script checks for an option or argument after the script, so any text will do. Simply using the letter `b` will work; or typing out the full subdirectory `/mysite` might be easier to remember.
 
-## Configuration Settings
-All settings that can be changed are in the `pysite.py` file.
-
-```
-# Define the source and destination paths
-TEMPLATE_DIR = BASE_DIR/'template'
-PUBLIC_DIR = BASE_DIR/'public'
-PAGES_DIR = BASE_DIR/'pages'
-OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
-DEFAULT_TEMPLATE = 'page'
-POSTS_DIR = 'posts'
-POST_INDEX_TEMPLATE = 'posts-index.html'
-
-# Set the base url if your site is served from a subdirectory
-# ex. website.com/mysite/
-# run as `python pysite.py s` The script just checks for an 
-# argument/option after the filename, so anything works
-BASE_URL = ''
-if len(sys.argv) > 1:
-    BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
-```
-
 # Usage
 
 After your site's template(s) and files are created in the `pages`, `public` and `template` folders, run the following command in the terminal
@@ -355,5 +356,4 @@ If using GitHub Pages, change GitHub settings to serve files from the `docs` fol
 
 ```python pysite.py -b```
 
-to create the files with the appropriate base URL. Remember to set the BASE_URL variable in `pysite.py` first.
-
+to create the files with the appropriate base URL. Remember to set the BASE_URL variable in `settings.yml` first.

@@ -7,22 +7,42 @@ from jinja2 import Environment, FileSystemLoader, Template
 
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
-# Define the source and destination paths
-TEMPLATE_DIR = BASE_DIR/'template'
-PUBLIC_DIR = BASE_DIR/'public'
-PAGES_DIR = BASE_DIR/'pages'
-OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
-DEFAULT_TEMPLATE = 'page'
-POSTS_DIR = 'posts'
-POST_INDEX_TEMPLATE = 'posts-index.html'
 
-# Set the base url if your site is served from a subdirectory
-# ex. website.com/mysite/
-# run as `python pysite.py s` The script just checks for an 
-# argument/option after the filename, so anything works
-BASE_URL = ''
-if len(sys.argv) > 1:
-    BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
+if Path('settings.toml').exists:
+    settings = frontmatter.load('settings.yml')
+    # Define the source and destination paths
+    TEMPLATE_DIR = BASE_DIR/settings.get("template_dir", 'template')
+    PUBLIC_DIR = BASE_DIR/settings.get("public_dir", 'public')
+    PAGES_DIR = BASE_DIR/settings.get("pages_dir", 'pages')
+    OUTPUT_DIR = BASE_DIR/settings.get("output_dir", 'docs') # use 'docs' to integrate with GitHub Pages
+    DEFAULT_TEMPLATE = settings.get("default_template", 'page')
+    POSTS_DIR = settings.get("posts_dir", 'posts')
+    POST_INDEX_TEMPLATE = settings.get("post_index_template", 'posts-index.html')
+
+    # Set the base url if your site is served from a subdirectory
+    # ex. website.com/mysite/
+    # run as `python pysite.py s` The script just checks for an 
+    # argument/option after the filename, so anything works
+    BASE_URL = ''
+    if len(sys.argv) > 1:
+        BASE_URL = settings.get("base_url", '') # CHANGE to the subdirectory of your site
+else:
+    # Define the source and destination paths
+    TEMPLATE_DIR = BASE_DIR/'template'
+    PUBLIC_DIR = BASE_DIR/'public'
+    PAGES_DIR = BASE_DIR/'pages'
+    OUTPUT_DIR = BASE_DIR/'docs' # use 'docs' to integrate with GitHub Pages
+    DEFAULT_TEMPLATE = 'page'
+    POSTS_DIR = 'posts'
+    POST_INDEX_TEMPLATE = 'posts-index.html'
+
+    # Set the base url if your site is served from a subdirectory
+    # ex. website.com/mysite/
+    # run as `python pysite.py s` The script just checks for an 
+    # argument/option after the filename, so anything works
+    BASE_URL = ''
+    if len(sys.argv) > 1:
+        BASE_URL = '/pysite' # CHANGE to the subdirectory of your site
     
 template_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
