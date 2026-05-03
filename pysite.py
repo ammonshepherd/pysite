@@ -107,12 +107,8 @@ def create_output_directory():
         return 
 
 
-def create_files_from_pages():
+def create_files_from_pages(posts_list):
     """Take every every file in the pages folder and apply a template, convert to HTML, if not already, and place in the appropriate path in the docs folder."""
-
-    posts_list = []
-    if Path(PAGES_DIR/POSTS_DIR).is_dir():
-        posts_list = get_sorted_posts()
 
     for item in PAGES_DIR.rglob("*"):
         # Create the static path for the file/folder
@@ -147,28 +143,9 @@ def create_files_from_pages():
             # write the new static file
             static_path.with_suffix(".html").write_text(new_content, encoding='utf-8')
 
-def create_files():
-    """Calls the create_files_from_pages function, and copies the public folder and the CNAME file if it exists to the output folder"""
-
-    # Call the create_files_from function to create the pages
-    create_files_from_pages()
-
-    # Copy CNAME file for GitHub pages with custom domain name
-    if Path("CNAME").is_file():
-        Path("CNAME").copy(OUTPUT_DIR/"CNAME")
-
-    # Copy the public directory into the static_site folder
-    try:
-        # This will copy the entire public folder and its contents to the new location.
-        PUBLIC_DIR.copy(OUTPUT_DIR/PUBLIC_DIR.name)
-        print(f"Directory '{PUBLIC_DIR}' copied successfully to '{OUTPUT_DIR/PUBLIC_DIR.name}'.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-def create_post_index_page():
-    posts_list = []
+def create_post_index_page(posts_list):
+    """Generates the main index page listing all posts."""
     if Path(PAGES_DIR/POSTS_DIR).is_dir() and Path(TEMPLATE_DIR/POST_INDEX_TEMPLATE).is_file():
-        posts_list = get_sorted_posts()
         content = ''
         for post in posts_list:
             content += f"\n\t<a href='{BASE_URL}/{POSTS_DIR}/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
@@ -193,7 +170,31 @@ def create_post_index_page():
     else:
         return
 
+def create_files():
+    """Calls the create_files_from_pages function, and copies the public folder and the CNAME file if it exists to the output folder"""
+
+    posts_list = []
+    if Path(PAGES_DIR/POSTS_DIR).is_dir():
+        posts_list = get_sorted_posts()
+
+    # Call the create_files_from function to create the pages
+    create_files_from_pages(posts_list)
+
+    if posts_list:
+        create_post_index_page(posts_list)
+
+    # Copy CNAME file for GitHub pages with custom domain name
+    if Path("CNAME").is_file():
+        Path("CNAME").copy(OUTPUT_DIR/"CNAME")
+
+    # Copy the public directory into the static_site folder
+    try:
+        # This will copy the entire public folder and its contents to the new location.
+        PUBLIC_DIR.copy(OUTPUT_DIR/PUBLIC_DIR.name)
+        print(f"Directory '{PUBLIC_DIR}' copied successfully to '{OUTPUT_DIR/PUBLIC_DIR.name}'.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 if __name__ == '__main__':
     create_output_directory()
     create_files()
-    create_post_index_page()
