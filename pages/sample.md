@@ -1,7 +1,7 @@
 ---
 title: 'Sample Markdown Page'
 author: 'Ammon Shepherd'
-date: '2026-04-19 21:12:22'
+date: 2026-04-19 21:12:22
 template: 'page'
 ---
 
