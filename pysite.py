@@ -170,8 +170,10 @@ def create_post_index_page(posts_list):
     else:
         return
 
-def create_files():
-    """Calls the create_files_from_pages function, and copies the public folder and the CNAME file if it exists to the output folder"""
+def build_site():
+    """Create directories, build static site files, copy files as necessary"""
+
+    create_output_directory()
 
     posts_list = []
     if Path(PAGES_DIR/POSTS_DIR).is_dir():
@@ -196,5 +198,4 @@ def create_files():
         print(f"An error occurred: {e}")
 
 if __name__ == '__main__':
-    create_output_directory()
-    create_files()
+    build_site()
