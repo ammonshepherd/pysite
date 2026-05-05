@@ -1,6 +1,7 @@
 import sys
 import shutil
 import markdown
+from dateutil import parser
 from pathlib import Path
 import frontmatter
 from jinja2 import Environment, FileSystemLoader
@@ -55,6 +56,8 @@ def get_sorted_posts():
         if file_path.is_file():
             post = frontmatter.load(file_path)
             post_date = post.get('date', '1900-01-01')
+            if isinstance(post_date, str):
+                post_date = parser.parse(post_date)
             post_title = post.get('title', post_date)
             posts.append({
                 "filename": file_path.with_suffix(".html").name,

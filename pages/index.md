@@ -271,7 +271,6 @@ date: 2026-04-13 21:23:33
 template: post
 ---
 ```
-Note, the date should not have quotes so that it will be converted to a Python date object.
 
 The default template is applied when no YAML or no `temlpate:` option is provided, except for HTML files in the `pages` folder without YAML frontmatter. HTML files without YAML frontmatter are copied exactly without alteration to the output folder.
 
