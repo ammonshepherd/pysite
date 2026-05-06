@@ -29,13 +29,13 @@ if settings_path.exists():
     config.update(settings_file.metadata)
 
 # Path Assignments
-TEMPLATE_DIR = BASE_DIR / config["template_dir"]
-PUBLIC_DIR = BASE_DIR / config["public_dir"]
 PAGES_DIR = BASE_DIR / config["pages_dir"]
+PUBLIC_DIR = BASE_DIR / config["public_dir"]
 OUTPUT_DIR = BASE_DIR / config["output_dir"]
+TEMPLATE_DIR = BASE_DIR / config["template_dir"]
+POST_INDEX_TEMPLATE = config["post_index_template"]
 DEFAULT_TEMPLATE = config["default_template"]
 POSTS_DIR = config["posts_dir"]
-POST_INDEX_TEMPLATE = config["post_index_template"]
 BASE_URL = ""
 
 if len(sys.argv) > 1:
@@ -75,7 +75,6 @@ def convert_file_contents(file, prev_post=None, next_post=None):
     page = frontmatter.load(file)
     # Add BASE_URL to YAML
     page['base_url'] = BASE_URL
-
     # add the prev and next metadata to the file's YAML
     if prev_post is not None:
         page['prev_post_url'] = f'{POSTS_DIR}/{prev_post['filename']}'
@@ -83,17 +82,13 @@ def convert_file_contents(file, prev_post=None, next_post=None):
     if next_post is not None:
         page['next_post_url'] = f'{POSTS_DIR}/{next_post['filename']}'
         page['next_post_title'] = next_post['title']
-
     # Create the content using the template's content and the file's contents
     content_rendered = template_env.from_string(page.content).render(**page.metadata)
-
     # convert all markdown to HTML if it exists
     htmlified = markdown.markdown(content_rendered, extensions=["attr_list", "fenced_code", "tables", "codehilite", "toc"])
-
     # Wrap in page template
     template_name = page.get('template', DEFAULT_TEMPLATE)
     template = template_env.get_template(f'{template_name}.html')
-
     return template.render( content=htmlified, **page.metadata)
     
 # --- MAIN EXECUTION LOGIC ---
@@ -120,7 +115,6 @@ def create_files_from_pages(posts_list):
         if item.is_dir():
             static_path.mkdir(parents=True, exist_ok=True) 
             continue
-
         # Create files
         # if file is an HTML file and has no YAML
         if item.suffix == ".html" and not frontmatter.check(item):
@@ -128,7 +122,6 @@ def create_files_from_pages(posts_list):
             item.copy(static_path)
         else:
             prev_post, next_post = None, None
-
             if POSTS_DIR in str(static_path):
                 item_index = None
                 # Get the index # in the posts_list list of the current file
@@ -140,7 +133,6 @@ def create_files_from_pages(posts_list):
                 if item_index is not None:
                     prev_post = posts_list[item_index - 1] if item_index > 0 else None
                     next_post = posts_list[item_index + 1] if item_index < len(posts_list) - 1 else None
-
             # pass the file through jinja2 and markdown parsers
             new_content = convert_file_contents(item, prev_post, next_post)
             # write the new static file
@@ -148,27 +140,19 @@ def create_files_from_pages(posts_list):
 
 def create_post_index_page(posts_list):
     """Generates the main index page listing all posts."""
-    if Path(PAGES_DIR/POSTS_DIR).is_dir() and Path(TEMPLATE_DIR/POST_INDEX_TEMPLATE).is_file():
+    if Path(PAGES_DIR/POSTS_DIR).is_dir() and Path(TEMPLATE_DIR / POST_INDEX_TEMPLATE).is_file():
         content = ''
         for post in posts_list:
             content += f"\n\t<a href='{BASE_URL}/{POSTS_DIR}/{post.get('filename', "")}'>{post.get('date', "")} - {post.get('title', "")}</a>"
-
         # load the content into a frontmatter object and add metadata
         page = frontmatter.loads(content)
         page['title'] = 'Posts Index Page'
         page['base_url'] = BASE_URL
-
-        # Create the content using the template's content and the file's contents
-        body_template = template_env.from_string(page.content)
-        # Convert all of the jinja variables in the content
-        resolved_content = body_template.render(**page.metadata)
-
         template_content = template_env.get_template(POST_INDEX_TEMPLATE)
         output = template_content.render(
-            content=resolved_content,
+            posts=posts_list,
             **page.metadata
         )
-
         Path(OUTPUT_DIR/POSTS_DIR/'index.html').write_text(output)
     else:
         return

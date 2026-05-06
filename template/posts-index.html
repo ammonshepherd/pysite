@@ -10,7 +10,27 @@
     <main>
         <h1>Posts Index</h1>
         <div class="posts-index">
-                {{ content }}
+            {% for year, year_group in posts|groupby('date.year') %}
+                <!-- Year Header/Break -->
+                <h2>{{ year }}</h2>
+                {% for month, month_group in year_group|groupby('date.month') %}
+                    <!-- Month Header/Break -->
+                    {% set month_map = {
+                        1: 'January', 2: 'February', 3: 'March', 4: 'April', 
+                        5: 'May', 6: 'June', 7: 'July', 8: 'August', 
+                        9: 'September', 10: 'October', 11: 'November', 12: 'December'
+                    } %}
+                    <details open>
+                        <summary>{{month_map[month] }}</summary>
+                        <ul>
+                        {% for post in month_group %}
+                            <li><a href="{{base_url}}/posts/{{post.filename}}">{{ post.title }} - {{ post.date }}</a></li>
+                        {% endfor %}
+                        </ul>
+                    </details>
+                    <hr> <!-- Visual break between months -->
+                {% endfor %}
+            {% endfor %}
         </div>
     </main>
 {% endblock %}
