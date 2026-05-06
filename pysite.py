@@ -60,7 +60,7 @@ def get_sorted_posts():
                 post_date = parser.parse(post_date)
             post_title = post.get('title', post_date)
             post_filename = file_path.with_suffix(".html").name
-            post_url = f"{POSTS_DIR}/{post_filename[0]}"
+            post_url = f"{POSTS_DIR}/{post_filename}"
             posts.append({
                 "filename": post_filename, 
                 "date": post_date,
