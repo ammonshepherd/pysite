@@ -59,10 +59,13 @@ def get_sorted_posts():
             if isinstance(post_date, str):
                 post_date = parser.parse(post_date)
             post_title = post.get('title', post_date)
+            post_filename = file_path.with_suffix(".html").name
+            post_url = f"{POSTS_DIR}/{post_filename[0]}"
             posts.append({
-                "filename": file_path.with_suffix(".html").name,
+                "filename": post_filename, 
                 "date": post_date,
-                "title": post_title
+                "title": post_title,
+                "url": post_url
             })
     posts.sort(key=lambda x: str(x['date']), reverse=False)
     return posts

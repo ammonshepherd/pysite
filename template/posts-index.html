@@ -24,7 +24,7 @@
                         <summary>{{month_map[month] }}</summary>
                         <ul>
                         {% for post in month_group %}
-                            <li><a href="{{base_url}}/posts/{{post.filename}}">{{ post.title }} - {{ post.date }}</a></li>
+                            <li><a href="{{base_url}}/{{post.url}}">{{ post.title }} - {{ post.date }}</a></li>
                         {% endfor %}
                         </ul>
                     </details>
