@@ -94,6 +94,16 @@ def convert_file_contents(file, prev_post=None, next_post=None):
     template = template_env.get_template(f'{template_name}.html')
     return template.render( content=htmlified, **page.metadata)
     
+def format_datetime(value, format="%d-%m-%Y"):
+    """Create a custom date format function for Jinja2 templates"""
+    if value is None:
+        return ""
+    return value.strftime(format)
+
+# register the filter with Jinja2 environment
+template_env.filters['datetime'] = format_datetime
+
+
 # --- MAIN EXECUTION LOGIC ---
 
 def create_output_directory():
