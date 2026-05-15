@@ -36,12 +36,11 @@ TEMPLATE_DIR = BASE_DIR / config["template_dir"]
 POST_INDEX_TEMPLATE = config["post_index_template"]
 DEFAULT_TEMPLATE = config["default_template"]
 POSTS_DIR = config["posts_dir"]
-BASE_URL = ""
+BASE_URL = settings_file.get("base_url", '') if len(sys.argv) > 1 else ""
 
-if len(sys.argv) > 1:
-    BASE_URL = settings_file.get("base_url", '') # CHANGE to the subdirectory of your site
-
+# Load the Jinja2 Template environment
 template_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+
 
 # --- HELPER FUNCTIONS ---
 
@@ -92,16 +91,16 @@ def convert_file_contents(file, prev_post=None, next_post=None):
     # Wrap in page template
     template_name = page.get('template', DEFAULT_TEMPLATE)
     template = template_env.get_template(f'{template_name}.html')
-    return template.render( content=htmlified, **page.metadata)
+    return template.render(content=htmlified, **page.metadata)
     
 def format_datetime(value, format="%d-%m-%Y"):
     """Create a custom date format function for Jinja2 templates"""
     if value is None:
         return ""
+    if isinstance(value, str):
+        value = parser.parse(value).date()
     return value.strftime(format)
 
-# register the filter with Jinja2 environment
-template_env.filters['datetime'] = format_datetime
 
 
 # --- MAIN EXECUTION LOGIC ---
@@ -135,7 +134,7 @@ def create_files_from_pages(posts_list):
             item.copy(static_path)
         else:
             prev_post, next_post = None, None
-            if POSTS_DIR in str(static_path):
+            if POSTS_DIR in str(static_path) and posts_list:
                 item_index = None
                 # Get the index # in the posts_list list of the current file
                 for i, file in enumerate(posts_list):
@@ -172,6 +171,9 @@ def create_post_index_page(posts_list):
 
 def build_site():
     """Create directories, build static site files, copy files as necessary"""
+
+    # register the filter with Jinja2 environment
+    template_env.filters['datetime'] = format_datetime
 
     create_output_directory()
 
