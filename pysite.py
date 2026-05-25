@@ -64,12 +64,13 @@ def get_sorted_posts():
                 "filename": post_filename, 
                 "date": post_date,
                 "title": post_title,
+                "content": post.content,
                 "url": post_url
             })
     posts.sort(key=lambda x: str(x['date']), reverse=False)
     return posts
 
-def convert_file_contents(file, prev_post=None, next_post=None):
+def convert_file_contents(file, prev_post=None, next_post=None, latest_post=None):
     """Processes Markdown/Jinja content into final HTML.
        Pass a file path and pass the contents through Jinja2 
        and Markdown parsers Returns the converted file contents"""
@@ -77,6 +78,7 @@ def convert_file_contents(file, prev_post=None, next_post=None):
     page = frontmatter.load(file)
     # Add BASE_URL to YAML
     page['base_url'] = BASE_URL
+    page['latest_post'] = latest_post
     # add the prev and next metadata to the file's YAML
     if prev_post is not None:
         page['prev_post_url'] = f'{POSTS_DIR}/{prev_post['filename']}'
@@ -120,6 +122,8 @@ def create_output_directory():
 def create_files_from_pages(posts_list):
     """Take every every file in the pages folder and apply a template, convert to HTML, if not already, and place in the appropriate path in the docs folder."""
 
+    latest_post = posts_list[-1] if posts_list else None
+
     for item in PAGES_DIR.rglob("*"):
         # Create the static path for the file/folder
         static_path = OUTPUT_DIR / item.relative_to(PAGES_DIR)
@@ -146,7 +150,7 @@ def create_files_from_pages(posts_list):
                     prev_post = posts_list[item_index - 1] if item_index > 0 else None
                     next_post = posts_list[item_index + 1] if item_index < len(posts_list) - 1 else None
             # pass the file through jinja2 and markdown parsers
-            new_content = convert_file_contents(item, prev_post, next_post)
+            new_content = convert_file_contents(item, prev_post, next_post, latest_post)
             # write the new static file
             static_path.with_suffix(".html").write_text(new_content, encoding='utf-8')
 
