@@ -60,11 +60,14 @@ def get_sorted_posts():
             post_title = post.get('title', post_date)
             post_filename = file_path.with_suffix(".html").name
             post_url = f"{POSTS_DIR}/{post_filename}"
+            # Convert the markdown and Jinja tags in the content
+            content_converted = markdown.markdown(post.content, extensions=[ "attr_list", "fenced_code", "tables", "codehilite", "toc" ])
+            post_content = template_env.from_string(content_converted).render(**post.metadata, base_url=BASE_URL)
             posts.append({
                 "filename": post_filename, 
                 "date": post_date,
                 "title": post_title,
-                "content": post.content,
+                "content": post_content,
                 "url": post_url
             })
     posts.sort(key=lambda x: str(x['date']), reverse=False)
