@@ -8,7 +8,9 @@ from watchdog.events import FileSystemEventHandler
 
 # --- Configuration ---
 WATCH_DIRECTORY = '.'            # The directory to watch for changes
-BUILD_SCRIPT = "pysite.py"      # The script to execute on file change
+BUILD_SCRIPT = ["pysite.py", "-d"] # The script to execute on file change. 
+                                   # The -d flag runs development mode which 
+                                   # makes the {{base_url}} template variable blank
 SERVE_DIRECTORY = "docs"       # The directory for the HTTP server to serve
 SERVER_HOST = '127.0.0.1'        # The host address for the HTTP server
 SERVER_PORT = 8000               # The port for the HTTP server
@@ -63,7 +65,7 @@ class ChangeHandler(FileSystemEventHandler):
         try:
             # Use subprocess.run for a robust way to execute external commands
             subprocess.run(
-                [sys.executable, self.build_script], 
+                [sys.executable, *self.build_script], 
                 check=True, 
                 text=True, 
                 capture_output=True # comment out to see BUILD_SCRIPT output

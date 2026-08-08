@@ -1,4 +1,5 @@
 import sys
+import argparse
 import shutil
 import markdown
 from dateutil import parser
@@ -7,6 +8,12 @@ import frontmatter
 from jinja2 import Environment, FileSystemLoader
 
 # --- CONFIGURATION & SETTINGS ---
+
+# Create command line arguments
+parser = argparse.ArgumentParser(description="Pysite: A super simple static site generator script.")
+parser.add_argument("-v", "--verbose", action="store_true", help="Increase output verbosity")
+parser.add_argument("-d", "--development", action="store_true", help="run in local development mode. The {{base_url}} template variable is empty to allow for running on a local server.")
+args = parser.parse_args() 
 
 # The BASE_DIR is the folder where this file exists
 BASE_DIR = Path(__file__).resolve().parent
@@ -36,7 +43,9 @@ TEMPLATE_DIR = BASE_DIR / config["template_dir"]
 POST_INDEX_TEMPLATE = config["post_index_template"]
 DEFAULT_TEMPLATE = config["default_template"]
 POSTS_DIR = config["posts_dir"]
-BASE_URL = settings_file.get("base_url", '') if len(sys.argv) > 1 else ""
+# Set the base url to an empty string if the -d/--development flag is used, 
+# otherwise use the settings file to set the base url.
+BASE_URL = "" if args.development else settings_file.get("base_url", '') 
 
 # Load the Jinja2 Template environment
 template_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))

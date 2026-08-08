@@ -58,11 +58,11 @@ The `settings.yml` file should have the following content:
 template_dir: 'template'
 public_dir: 'public'
 pages_dir: 'pages'
-output_dir: 'docs' # use 'docs' to integrate with GitHub Pages
+output_dir: 'docs'      # use 'docs' to integrate with GitHub Pages
 default_template: 'page'
 posts_dir: 'posts'
 post_index_template: 'posts-index.html'
-base_url: '/pysite' # CHANGE to the subdirectory of your site
+base_url: '/pysite'     # CHANGE to the subdirectory of your site if needed or leave blank
 ---
 ```
 
@@ -328,15 +328,14 @@ For example, in an HTML file you can create a link to the about page stored in `
 
 The `{{base_url}}` is automatically converted to the specified subdirectory for your website.
 
-By default, `{{base_url}}` is empty, nothing. This allows you to run the `python server.py` script to test the site locally without the subdirectory affecting the URL. (This may change in a future version.)
+By default, `{{base_url}}` is empty/nothing when you run the `python server.py` script to test the site locally without the subdirectory affecting the URL.
 
 You will only activate the `{{base_url}}` ability when creating the static version of the files to send to your hosting provider. 
 
 To activate the `{{base_url}}` ability, run the `pysite.py` script like so:
 
-`python pysite.py -b`
+`python pysite.py`
 
-The script checks for an option or argument after the script, so any text will do. Simply using the letter `b` will work; or typing out the full subdirectory `/mysite` might be easier to remember.
 
 # Usage
 
@@ -352,8 +351,10 @@ The server will notice changes to files every second and restart the server so y
 
 You can transfer the files from the `docs` folder to your web host for static file serving glory! 
 
-If using GitHub Pages, change GitHub settings to serve files from the `docs` folder. When the site is ready run
+## GitHub Pages
 
-```python pysite.py -b```
+If using GitHub Pages, change settings in your GitHub repo to serve files from the `docs` folder. Remember to set the BASE_URL variable in `settings.yml`. When your site is ready, run
 
-to create the files with the appropriate base URL. Remember to set the BASE_URL variable in `settings.yml` first.
+```python pysite.py```
+
+to create the files with the appropriate base URL. Then you can commit the changes and push them to your GitHub repo. GitHub will automatically apply the changes. It usually takes about 5 minutes for the changes to propagate to the website.
