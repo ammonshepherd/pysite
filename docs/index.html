@@ -75,11 +75,11 @@
 template_dir: 'template'
 public_dir: 'public'
 pages_dir: 'pages'
-output_dir: 'docs' # use 'docs' to integrate with GitHub Pages
+output_dir: 'docs'      # use 'docs' to integrate with GitHub Pages
 default_template: 'page'
 posts_dir: 'posts'
 post_index_template: 'posts-index.html'
-base_url: '/pysite' # CHANGE to the subdirectory of your site
+base_url: '/pysite'     # CHANGE to the subdirectory of your site
 ---
 </code></pre>
 
@@ -286,11 +286,10 @@ Author: {{author}}
 </code></pre>
 
 <p>The <code>{{base_url}}</code> is automatically converted to the specified subdirectory for your website.</p>
-<p>By default, <code>{{base_url}}</code> is empty, nothing. This allows you to run the <code>python server.py</code> script to test the site locally without the subdirectory affecting the URL. (This may change in a future version.)</p>
+<p>By default, <code>{{base_url}}</code> is empty/nothing when you run the <code>python server.py</code> script to test the site locally without the subdirectory affecting the URL.</p>
 <p>You will only activate the <code>{{base_url}}</code> ability when creating the static version of the files to send to your hosting provider. </p>
 <p>To activate the <code>{{base_url}}</code> ability, run the <code>pysite.py</code> script like so:</p>
-<p><code>python pysite.py -b</code></p>
-<p>The script checks for an option or argument after the script, so any text will do. Simply using the letter <code>b</code> will work; or typing out the full subdirectory <code>/mysite</code> might be easier to remember.</p>
+<p><code>python pysite.py</code></p>
 <h1 id="usage">Usage</h1>
 <p>After your site's template(s) and files are created in the <code>pages</code>, <code>public</code> and <code>template</code> folders, run the following command in the terminal</p>
 <p><code>python server.py</code></p>
@@ -298,9 +297,10 @@ Author: {{author}}
 <p>For development testing, you can view the site at <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a></p>
 <p>The server will notice changes to files every second and restart the server so you can refresh the browser to the latest changes.</p>
 <p>You can transfer the files from the <code>docs</code> folder to your web host for static file serving glory! </p>
-<p>If using GitHub Pages, change GitHub settings to serve files from the <code>docs</code> folder. When the site is ready run</p>
-<p><code>python pysite.py -b</code></p>
-<p>to create the files with the appropriate base URL. Remember to set the BASE_URL variable in <code>settings.yml</code> first.</p>
+<h2 id="github-pages">GitHub Pages</h2>
+<p>If using GitHub Pages, change settings in your GitHub repo to serve files from the <code>docs</code> folder. Remember to set the BASE_URL variable in <code>settings.yml</code>. When your site is ready, run</p>
+<p><code>python pysite.py</code></p>
+<p>to create the files with the appropriate base URL. Then you can commit the changes and push them to your GitHub repo. GitHub will automatically apply the changes. It usually takes about 5 minutes for the changes to propagate to the website.</p>
 <h1 id="example-pages">Example Pages</h1>
 <p><a href="/pysite/posts/">Example Posts Index</a></p>
 <p><a href="/pysite/about.html">Example About Page</a> - A stand-alone HTML file without any rendering or conversion</p>
