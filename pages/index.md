@@ -1,7 +1,8 @@
+![A python driving a Chevy Chevelle SS](logos/pysite-logo.webp)
+
 # Pysite
 A Super Simple Static Site Creator written in Python.
 
-[GitHub Repository](https://github.com/ammonshepherd/pysite)
 
 # Requirements
 
@@ -20,7 +21,7 @@ At the very basics, this script will take every HTML and Markdown file in a give
 
 Each HTML or Markdown file from the selected folder will now have the same header (title, stylesheet, navigation) and footer content, which can be edited from the template file.
 
-![Multiple files compiled into one HTML file.]({{base_url}}/public/images/file-assembly.png){: .image-border}
+![Multiple files compiled into one HTML file.](file-assembly.png)
 
 
 # Installation
@@ -57,11 +58,11 @@ The `settings.yml` file should have the following content:
 template_dir: 'template'
 public_dir: 'public'
 pages_dir: 'pages'
-output_dir: 'docs' # use 'docs' to integrate with GitHub Pages
+output_dir: 'docs'      # use 'docs' to integrate with GitHub Pages
 default_template: 'page'
 posts_dir: 'posts'
 post_index_template: 'posts-index.html'
-base_url: '/pysite' # CHANGE to the subdirectory of your site
+base_url: '/pysite'     # CHANGE to the subdirectory of your site if needed or leave blank
 ---
 ```
 
@@ -76,11 +77,11 @@ The names of these folders can be changed in the `settings.yml` file.
 
 Any file or folder at the top level of the project (the same level as the `pages`, `public` and `template` folders) will be ignored. Any file in the `pages` folder will be converted into an HTML file and placed in a folder or sub-folder in the top-level of the output folder. That is to say, any files and folders in the `pages` folder will be recreated exactly in the static output folder, but all files will have the appropriate template applied to them, and they will be converted to HTML files. 
 
-![pages folder to docs folder]({{base_url}}/public/images/pages-folder.png){: .image-border}
+![pages folder to docs folder](pages-folder.png)
 
 Any files and folders in the `public` folder will be copied exactly without alteration into the static output folder, including the `public` folder.
 
-![public folder to docs folder]({{base_url}}/public/images/public-folder.png){: .image-border}
+![public folder to docs folder](public-folder.png)
 
 
 #### Folder: `template`
@@ -136,13 +137,11 @@ This is where you put the images, css and Javascript. Suggested file structure:
 
 Access the files in these folders in your HTML and Markdown as absolute paths:
 
-{% raw %}
 The file `public/images/logo.png` is accessed like `<img alt="alt description" src="{{base_url}}/public/images/logo.png">` for HTML and `![alt description]({{base_url}}/public/images/logo.png)` for Markdown.
 
 The CSS file can be accessed in the template file `template/base.html` file like so: `<link rel="stylesheet" href="{{base_url}}/public/css/style.css">`
-{% endraw %}
 
-See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of {% raw %}`{{base_url}}`{% endraw %}.
+See [base_url](#url-subdirectory) for more information on the use of `{{base_url}}`.
 
 #### Folders: `docs`
 
@@ -152,7 +151,7 @@ The `docs` folder can be copied to a web host to be served as the static website
 
 If using GitHub Pages, select the `docs` folder as the folder to build the site from.
 
-![GitHub Pages built from docs folder in the main branch]({{base_url}}/public/images/github-pages.png){: .image-border}
+![GitHub Pages built from docs folder in the main branch](github-pages.png)
 
 The name of the static files output folder can be changed in the `settings.yml` file.
 
@@ -166,16 +165,12 @@ All files in the top-level folder of the project (the same level as the `pages`,
 
 Any file in the `template` folder is considered a template. It can be a full HTML file with
 
-
-{% raw %}
 `{{ content }}` 
-{% endraw %}
 
 placed where the content of files from the `pages` directory should go.
 
 A simple pages template might look like:
 
-{% raw %}
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -204,9 +199,7 @@ A simple pages template might look like:
 </body>
 </html>
 ```
-{% endraw %}
-
-See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of {% raw %}`{{base_url}}`{% endraw %}.
+See [base_url](#url-subdirectory) for more information on the use of `{{base_url}}`.
 
 At least one template file must exist. The default is to look for a `template/page.html` file. This setting can be changed in `settings.yml`.
 
@@ -218,7 +211,6 @@ Jinja Template Hierarchy is enabled so creating a base template that other templ
 A simple base template could be:
 
 [template/base.html]
-{% raw %}
 ```    
 <!DOCTYPE html>
 <html lang="en">
@@ -253,7 +245,6 @@ The page template would then look like this:
     </main>
 {% endblock %}
 ```
-{% endraw %}
 
 When all conversion and rendering are done, the Jinja variables are converted and the base.html, page.html and the original file's content are all combined into one HTML page.
 
@@ -278,7 +269,6 @@ Any variable in the YAML frontmatter can be used as a variable in the file and t
 
 For example, a blog post can look like this:
 
-{% raw %}
 ```
 ---
 title: 'Blog post example'
@@ -315,11 +305,10 @@ Or like this if using template hierarchy
 {% extends "base.html" %}
 {% block title %}MySite Post: {{title}}{% endblock %}
 ```
-{% endraw %}
 
 [Jijna2](https://jinja.palletsprojects.com/en/stable/) is used for converting template variables, so any Jinja2 templating is allowed.
 
-See [base_url]({{base_url}}/#url-subdirectory) for more information on the use of {% raw %}`{{base_url}}`{% endraw %}.
+See [base_url](#url-subdirectory) for more information on the use of `{{base_url}}`.
 
 #### Files in the `public` folder
 
@@ -329,7 +318,6 @@ For example, a file at `public/css/style.css` is available at `https://website.c
 
 ## URL Subdirectory
 
-{% raw %}
 To help in cases where the website is located at `https://website.com/mysite/`, the Jinja template variable `{{base_url}}` is used in template, Markdown and HTML files. Every URL reference to internal files should begin with `{{base_url}}`
 
 For example, in an HTML file you can create a link to the about page stored in `pages/about.html` like this:
@@ -340,16 +328,14 @@ For example, in an HTML file you can create a link to the about page stored in `
 
 The `{{base_url}}` is automatically converted to the specified subdirectory for your website.
 
-By default, `{{base_url}}` is empty, nothing. This allows you to run the `python server.py` script to test the site locally without the subdirectory affecting the URL. (This may change in a future version.)
+By default, `{{base_url}}` is empty/nothing when you run the `python server.py` script to test the site locally without the subdirectory affecting the URL.
 
 You will only activate the `{{base_url}}` ability when creating the static version of the files to send to your hosting provider. 
 
 To activate the `{{base_url}}` ability, run the `pysite.py` script like so:
-{% endraw %}
 
-`python pysite.py -b`
+`python pysite.py`
 
-The script checks for an option or argument after the script, so any text will do. Simply using the letter `b` will work; or typing out the full subdirectory `/mysite` might be easier to remember.
 
 # Usage
 
@@ -365,15 +351,10 @@ The server will notice changes to files every second and restart the server so y
 
 You can transfer the files from the `docs` folder to your web host for static file serving glory! 
 
-If using GitHub Pages, change GitHub settings to serve files from the `docs` folder. When the site is ready run
+## GitHub Pages
 
-```python pysite.py -b```
+If using GitHub Pages, change settings in your GitHub repo to serve files from the `docs` folder. Remember to set the BASE_URL variable in `settings.yml`. When your site is ready, run
 
-to create the files with the appropriate base URL. Remember to set the BASE_URL variable in `settings.yml` first.
+```python pysite.py```
 
-
-# Example Pages
-
-[Example Posts Index]({{base_url}}/posts/)
-
-[Example About Page]({{base_url}}/about.html) - A stand-alone HTML file without any rendering or conversion
+to create the files with the appropriate base URL. Then you can commit the changes and push them to your GitHub repo. GitHub will automatically apply the changes. It usually takes about 5 minutes for the changes to propagate to the website.
